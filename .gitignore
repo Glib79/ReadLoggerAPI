@@ -7,3 +7,6 @@
 docker/data/
 ###< docker ###
 
+###> netbeans ###
+/app/nbproject/
+###< netbeans ###
