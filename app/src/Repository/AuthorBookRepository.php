@@ -42,7 +42,9 @@ class AuthorBookRepository extends BaseRepository
      */
     public function findAuthorsByBooks(array $bookIds): array
     {
-        $sql = <<<'SQL'
+        $books = sprintf('"%s"', implode('","',$bookIds));
+        
+        $sql = <<<"SQL"
             SELECT 
                 ab.book_id, 
                 ab.author_id AS id, 
@@ -52,15 +54,12 @@ class AuthorBookRepository extends BaseRepository
                 a.modified_at
             FROM author_book AS ab
             JOIN author AS a ON (a.id = ab.author_id)
-            WHERE ab.book_id IN (:books);
+            WHERE ab.book_id IN ($books);
         SQL;
         
         $stmt = $this->execute(
             $this->readConn, 
-            $sql, 
-            [
-                'books' => implode('","',$bookIds)
-            ]
+            $sql
         );
         
         return $stmt->fetchAll();
