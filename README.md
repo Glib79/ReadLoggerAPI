@@ -1,11 +1,11 @@
-# Base API Project Symfony 5
+# Read Logger API
 
-Basic API project based on Symfony 5 using: doctrine (for connection), authentication JWT token (lexik/jwt-authentication-bundle), phpunit tests, dto + validation, uuid (ramsey/uuid-doctrine), CORS controll (nelmio/cors-bundle)
+API for Read Logger project based on Symfony 5 using: doctrine (for connection), authentication JWT token (lexik/jwt-authentication-bundle), phpunit tests, dto + validation, uuid (ramsey/uuid-doctrine), CORS controll (nelmio/cors-bundle)
 
 ## Instalation guide:
 
 ### Step 1 - prepare project
-- git clone project from https://github.com/Glib79/sf5_api
+- git clone project from https://github.com/Glib79/ReadLoggerAPI
 - rename `.env.example` file to `.env`
 - edit `.env` and setup database credentials (MYSQL_ROOT_PASSWORD, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD), it's for database which will be created in docker container.
 - rename `app/.env.example` to `app/.env`
@@ -22,6 +22,9 @@ Migration create database structure.
 
 ### Step 3 - add ssh keys
 Application needs ssh keys:
+
+Create directory for ssh keys:
+- mkdir app/config/jwt
 
 Generate ssh keys:
 - docker-compose exec php openssl genrsa -out config/jwt/private.pem -aes256 4096

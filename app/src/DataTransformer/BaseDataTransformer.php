@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\DataTransformer;
 
+use ErrorException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -27,5 +28,21 @@ abstract class BaseDataTransformer
     {
         $this->serializer = $serializer;
         $this->validator = $validator;
+    }
+    
+     /**
+     * Transform array from database to array ready for output
+     * @param array $data
+     * @param array $groups
+     * @return array
+     */
+    public function transformList(array $data, array $groups): array
+    {
+        $output = [];
+        foreach ($data as $object) {
+            $output[] = $this->transformOutput($object, $groups);
+        }
+        
+        return $output;
     }
 }

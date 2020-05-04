@@ -35,13 +35,21 @@ abstract class BaseRepository
      * @param Connection $conn
      * @param string $sql
      * @param array $params
+     * @param array $types
      * @throws DatabaseException
      * @return Statement
      */
-    protected function execute(Connection $conn, string $sql, array $params = []): Statement
+    protected function execute(Connection $conn, string $sql, array $params = [], array $types = []): Statement
     {
         $stmt = $conn->prepare($sql);
-        $stmt->execute($params);
+        if ($types) {
+            foreach ($params as $key => $param) {
+                $stmt->bindValue($key, $param, $types[$key]);
+            }
+            $stmt->execute();
+        } else {
+            $stmt->execute($params);
+        }
         
         if ($stmt->errorCode() !== '00000') {
             throw new DatabaseException(json_encode($stmt->errorInfo()));

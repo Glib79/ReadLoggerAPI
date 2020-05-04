@@ -8,7 +8,7 @@ use DateTime;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Request;
 
-class UserDataTransformer extends BaseDataTransformer
+class UserDataTransformer extends BaseDataTransformer implements DataTransformerInterface
 {
     /**
      * Transform Request to UserDto

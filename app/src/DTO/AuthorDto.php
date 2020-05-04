@@ -8,10 +8,10 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CategoryDto extends BaseDto
+class AuthorDto extends BaseDto
 {
     /**
-     * @Groups({BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
+     * @Groups({BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST, BaseDto::GROUP_AUTOSUGGEST})
      * @Assert\NotBlank(groups={BaseDto::GROUP_UPDATE})
      * @Assert\Type(type="object", groups={BaseDto::GROUP_UPDATE})
      * @var Uuid
@@ -19,13 +19,21 @@ class CategoryDto extends BaseDto
     public $id;
     
     /**
-     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
+     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST, BaseDto::GROUP_AUTOSUGGEST})
      * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @Assert\Type(type="string", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var string
      */
-    public $name;
-    
+    public $firstName;
+
+    /**
+     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST, BaseDto::GROUP_AUTOSUGGEST})
+     * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
+     * @Assert\Type(type="string", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
+     * @var string
+     */
+    public $lastName;
+
     /**
      * @Groups({BaseDto::GROUP_SINGLE})
      * @var DateTime
