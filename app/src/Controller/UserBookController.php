@@ -96,14 +96,18 @@ class UserBookController extends BaseApiController
 //    }
     
     /**
-     * Books List
+     * Users books list
      * @return JsonResponse
      * @Route("/user-books", name="user_books", methods={"GET"})
      */
-    public function getUserBooks(): JsonResponse
+    public function getUserBooks(Request $request): JsonResponse
     {
+        $status = $request->query->getInt('status');
         $user = $this->getUser();
-        $data = $this->userBookManager->findUsersBooks($user->getId()->toString());
+        $data = $this->userBookManager->findUsersBooks(
+            $user->getId()->toString(), 
+            ['status' => $status]
+        );
         
         $outputList = $this->userBookDataTransformer->transformList($data, [BaseDto::GROUP_LIST]);
         
@@ -115,24 +119,24 @@ class UserBookController extends BaseApiController
         );
     }
 
-//    /**
-//     * Get single category
-//     * @param string $id
-//     * @return JsonResponse
-//     * @Route("/category/{id}", name="category_get", methods={"GET"})
-//     */
-//    public function getCategory(string $id): JsonResponse
-//    {
-//        $category = $this->categoryRepository->getCategoryById($id);
-//
-//        if (!$category) {
-//            return $this->response(Response::HTTP_NOT_FOUND, 'Category not found');
-//        }
-//        
-//        $output = $this->categoryDataTransformer->transformOutput($category, [BaseDto::GROUP_SINGLE]);
-//
-//        return $this->response(Response::HTTP_OK, 'Category found', $output);
-//    }
+    /**
+     * Get single user book
+     * @param string $id
+     * @return JsonResponse
+     * @Route("/user-book/{id}", name="user_book_get", methods={"GET"})
+     */
+    public function getUserBook(string $id): JsonResponse
+    {
+        $data = $this->userBookManager->getUsersBookById($id);
+
+        if (!$data) {
+            return $this->response(Response::HTTP_NOT_FOUND, 'Book not found');
+        }
+        
+        $output = $this->userBookDataTransformer->transformOutput($data, [BaseDto::GROUP_SINGLE]);
+
+        return $this->response(Response::HTTP_OK, 'Users book found', $output);
+    }
 //
 //    /**
 //     * Update category

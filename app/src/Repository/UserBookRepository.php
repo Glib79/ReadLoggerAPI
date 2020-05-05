@@ -75,24 +75,18 @@ class UserBookRepository extends BaseRepository
     }
     
     /**
-     * Find books by user
-     * @param string $userId
-     * @param array $params 
+     * Find user book by id
+     * @param string $id
      * @return array
      */
-    public function findBooksByUser(string $userId, array $params = []): array
+    public function findBookById(string $id): array
     {
-        $params['limit'] = $params['limit'] ?? 10;
-        $params['offset'] = isset($params['page']) ? $params['page'] * $params['limit'] : 0; 
-
         $sql = <<<'SQL'
             SELECT 
                 ub.*, 
                 b.title AS book_title,
                 b.sub_title AS book_sub_title,
                 b.size AS book_size,
-                b.created_at AS book_created_at,
-                b.modified_at AS book_modified_at,
                 f.translation_key AS format_translation_key,
                 l.translation_key AS language_translation_key,
                 s.translation_key AS status_translation_key
@@ -101,25 +95,80 @@ class UserBookRepository extends BaseRepository
             JOIN format AS f ON (f.id = ub.format_id)
             JOIN language AS l ON (l.id = ub.language_id)
             JOIN status AS s ON (s.id = ub.status_id)
-            WHERE ub.user_id = :id
-            ORDER BY ub.end_date DESC
-            LIMIT :offset, :limit;
+            WHERE ub.id = :id;
         SQL;
         
+        $stmt = $this->execute(
+            $this->readConn, 
+            $sql,
+            [
+                'id' => $id
+            ]
+        );
+        
+        return $stmt->fetch();
+    }
+    
+    /**
+     * Find books by user
+     * @param string $userId
+     * @param array $params 
+     * @return array
+     */
+    public function findBooksByUser(string $userId, array $params = []): array
+    {
+        $params['limit'] = $params['limit'] ?? 10;
+        $params['offset'] = !empty($params['page']) ? $params['page'] * $params['limit'] : 0; 
+        
+        $sqlParams = [
+            'id'     => $userId,
+            'offset' => (int) $params['offset'],
+            'limit'  => (int) $params['limit']
+        ];
+        
+        $sqlTypes = [
+            'id'     => ParameterType::STRING,
+            'offset' => ParameterType::INTEGER,
+            'limit'  => ParameterType::INTEGER
+        ];
+        
+        $where = 'WHERE ub.user_id = :id ';
+        if (!empty($params['status'])) {
+            $where .= 'AND ub.status_id = :status ';
+            $sqlParams['status'] = $params['status'];
+            $sqlTypes['status'] = ParameterType::INTEGER;
+        }
+
+        $sql = <<<"SQL"
+            SELECT 
+                ub.id,
+                ub.book_id,
+                ub.format_id,
+                ub.language_id,
+                ub.status_id,
+                ub.start_date,
+                ub.end_date,
+                b.title AS book_title,
+                b.sub_title AS book_sub_title,
+                b.size AS book_size,
+                f.translation_key AS format_translation_key,
+                l.translation_key AS language_translation_key,
+                s.translation_key AS status_translation_key
+            FROM user_book AS ub 
+            JOIN book AS b ON (b.id = ub.book_id)
+            JOIN format AS f ON (f.id = ub.format_id)
+            JOIN language AS l ON (l.id = ub.language_id)
+            JOIN status AS s ON (s.id = ub.status_id)
+            $where
+            ORDER BY ub.status_id ASC, ub.start_date DESC
+            LIMIT :offset, :limit;
+        SQL;
         
         $stmt = $this->execute(
             $this->readConn, 
             $sql, 
-            [
-                'id'     => $userId,
-                'offset' => (int) $params['offset'],
-                'limit'  => (int) $params['limit']
-            ],
-            [
-                'id'     => ParameterType::STRING,
-                'offset' => ParameterType::INTEGER,
-                'limit'  => ParameterType::INTEGER
-            ]
+            $sqlParams,
+            $sqlTypes
         );
         
         return $stmt->fetchAll();

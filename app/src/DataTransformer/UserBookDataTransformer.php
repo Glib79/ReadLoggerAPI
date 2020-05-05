@@ -106,12 +106,8 @@ class UserBookDataTransformer extends BaseDataTransformer implements DataTransfo
             $userBook['book'], 
             $groups
         );
-        if (isset($userBook['start_date'])) {
-            $dto->startDate = new DateTime($userBook['start_date']);
-        }
-        if (isset($userBook['end_date'])) {
-            $dto->endDate = new DateTime($userBook['end_date']);
-        }
+        $dto->startDate = !empty($userBook['start_date']) ? new DateTime($userBook['start_date']) : null;
+        $dto->endDate = !empty($userBook['end_date']) ? new DateTime($userBook['end_date']) : null;
         $dto->status = $this->statusDataTransformer->transformOutput(
             $userBook['status'], 
             $groups
@@ -120,14 +116,14 @@ class UserBookDataTransformer extends BaseDataTransformer implements DataTransfo
             $userBook['format'], 
             $groups
         );
-        $dto->rating = $userBook['rating'];
+        $dto->rating = $userBook['rating'] ?? null;
         $dto->language = $this->languageDataTransformer->transformOutput(
             $userBook['language'], 
             $groups
         );
-        $dto->notes = $userBook['notes'];
-        $dto->createdAt = new DateTime($userBook['created_at']);
-        $dto->modifiedAt = new DateTime($userBook['modified_at']);
+        $dto->notes = $userBook['notes'] ?? null;
+        $dto->createdAt = !empty($userBook['created_at']) ? new DateTime($userBook['created_at']) : null;
+        $dto->modifiedAt = !empty($userBook['modified_at']) ? new DateTime($userBook['modified_at']) : null;
         
         return $dto->normalize($groups);
     }

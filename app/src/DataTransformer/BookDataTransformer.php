@@ -91,10 +91,10 @@ class BookDataTransformer extends BaseDataTransformer implements DataTransformer
         $dto = new BookDto($this->serializer, $this->validator);
         $dto->id = Uuid::fromString($book['id']);
         $dto->title = $book['title'];
-        $dto->subTitle = $book['sub_title'];
-        $dto->size = $book['size'];
-        $dto->createdAt = new DateTime($book['created_at']);
-        $dto->modifiedAt = new DateTime($book['modified_at']);
+        $dto->subTitle = $book['sub_title'] ?? null;
+        $dto->size = $book['size'] ?? null;
+        $dto->createdAt = !empty($book['created_at']) ? new DateTime($book['created_at']) : null;
+        $dto->modifiedAt = !empty($book['modified_at']) ? new DateTime($book['modified_at']) : null;
         
         if (isset($book['authors'])) {
             $dto->authors = $this->authorDataTransformer->transformList(

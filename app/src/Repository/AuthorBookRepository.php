@@ -49,9 +49,7 @@ class AuthorBookRepository extends BaseRepository
                 ab.book_id, 
                 ab.author_id AS id, 
                 a.first_name, 
-                a.last_name,
-                a.created_at,
-                a.modified_at
+                a.last_name
             FROM author_book AS ab
             JOIN author AS a ON (a.id = ab.author_id)
             WHERE ab.book_id IN ($books);
