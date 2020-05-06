@@ -71,23 +71,15 @@ class UserBookDataTransformer extends BaseDataTransformer implements DataTransfo
         $dto = new UserBookDto($this->serializer, $this->validator);
         $data = json_decode($request->getContent(), true);
         
-        $dto->book = $this->bookDataTransformer->transformArray($data['book']);
+        $dto->book = !empty($data['book']) ? $this->bookDataTransformer->transformArray($data['book']) : null;
         $dto->status = $this->statusDataTransformer->transformArray($data['status']);
         $dto->format = $this->formatDataTransformer->transformArray($data['format']);
         $dto->language= $this->languageDataTransformer->transformArray($data['language']);
         
-        if (isset($data['startDate'])) {
-            $dto->startDate = new DateTime($data['startDate']);
-        }
-        if (isset($data['endDate'])) {
-            $dto->endDate = new DateTime($data['endDate']);
-        }
-        if (isset($data['rating'])) {
-            $dto->rating = $data['rating'];
-        }
-        if (isset($data['notes'])) {
-            $dto->notes = $data['notes'];
-        }
+        $dto->startDate = !empty($data['startDate']) ? new DateTime($data['startDate']) : null;
+        $dto->endDate = !empty($data['endDate']) ? new DateTime($data['endDate']) : null;
+        $dto->rating = !empty($data['rating']) ? (int) $data['rating'] : null;
+        $dto->notes = $data['notes'] ?? null;
         
         return $dto;
     }

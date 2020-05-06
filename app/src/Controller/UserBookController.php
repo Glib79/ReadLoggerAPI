@@ -20,6 +20,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class UserBookController extends BaseApiController
 {
+    private const DEFAULT_LIMIT = 10;
+    
     /**
      * @var UserBookDataTransformer
      */
@@ -102,11 +104,19 @@ class UserBookController extends BaseApiController
      */
     public function getUserBooks(Request $request): JsonResponse
     {
+        $limit = $this::DEFAULT_LIMIT;
+        $page = $request->query->getInt('page', 1);
         $status = $request->query->getInt('status');
         $user = $this->getUser();
+        $userId = $user->getId()->toString();
+        
         $data = $this->userBookManager->findUsersBooks(
-            $user->getId()->toString(), 
-            ['status' => $status]
+            $userId, 
+            [
+                'limit'  => $limit,
+                'page'   => $page,
+                'status' => $status
+            ]
         );
         
         $outputList = $this->userBookDataTransformer->transformList($data, [BaseDto::GROUP_LIST]);
@@ -115,7 +125,11 @@ class UserBookController extends BaseApiController
             Response::HTTP_OK, 
             'Books found', 
             $outputList, 
-            ['count' => count($outputList)]
+            [
+                'count' => count($outputList),
+                'page'  => $page,
+                'pages' => ceil($this->userBookRepository->countUsersBooks($userId) / $limit)
+            ]
         );
     }
 
@@ -137,35 +151,29 @@ class UserBookController extends BaseApiController
 
         return $this->response(Response::HTTP_OK, 'Users book found', $output);
     }
-//
-//    /**
-//     * Update category
-//     * @param Request $request
-//     * @param string $id
-//     * @return JsonResponse
-//     * @Route("/category/{id}", name="category_put", methods={"PUT"})
-//     */
-//    public function updateCategory(Request $request, string $id): JsonResponse
-//    {
-//        try {
-//            $category = $this->categoryRepository->getCategoryById($id);
-//
-//            if (!$category) {
-//                return $this->response(Response::HTTP_NOT_FOUND, 'Category not found');
-//            }
-//
-//            /** @var CategoryDto */
-//            $dto = $this->categoryDataTransformer->transformInput($request);
-//            $dto->id = Uuid::fromString($category['id']);
-//            
-//            $dto->validate([BaseDto::GROUP_UPDATE]);
-//            
-//            $this->categoryManager->updateCategory($dto);
-//
-//            return $this->response(Response::HTTP_OK, 'Category updated');
-//        } catch (ValidationException $e) {
-//            return $this->response(Response::HTTP_BAD_REQUEST, $e->getMessage(), $e->getErrors());
-//        }
-//    }
+
+    /**
+     * Update user book
+     * @param Request $request
+     * @param string $id
+     * @return JsonResponse
+     * @Route("/user-book/{id}", name="user_book_patch", methods={"PATCH"})
+     */
+    public function updateUserBook(Request $request, string $id): JsonResponse
+    {
+        try {
+            /** @var UserBookDto */
+            $dto = $this->userBookDataTransformer->transformRequest($request);
+            $dto->id = Uuid::fromString($id);
+            
+            $dto->validate([BaseDto::GROUP_UPDATE]);
+            
+            $this->userBookManager->updateUserBook($dto);
+
+            return $this->response(Response::HTTP_OK, 'User book updated');
+        } catch (ValidationException $e) {
+            return $this->response(Response::HTTP_BAD_REQUEST, $e->getMessage(), $e->getErrors());
+        }
+    }
 }
 

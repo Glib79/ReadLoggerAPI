@@ -74,6 +74,26 @@ class UserBookRepository extends BaseRepository
         return $id;
     }
     
+    public function countUsersBooks(string $userId): int
+    {
+        $sql = <<<'SQL'
+            SELECT COUNT(ub.id) as bookNumber
+            FROM user_book AS ub
+            WHERE ub.user_id = :userId
+            GROUP BY ub.user_id;
+        SQL;
+        
+        $stmt = $this->execute(
+            $this->readConn, 
+            $sql,
+            [
+                'userId' => $userId
+            ]
+        );
+        
+        return (int) $stmt->fetchColumn(0);
+    }
+    
     /**
      * Find user book by id
      * @param string $id
@@ -118,7 +138,7 @@ class UserBookRepository extends BaseRepository
     public function findBooksByUser(string $userId, array $params = []): array
     {
         $params['limit'] = $params['limit'] ?? 10;
-        $params['offset'] = !empty($params['page']) ? $params['page'] * $params['limit'] : 0; 
+        $params['offset'] = !empty($params['page']) ? ($params['page'] - 1) * $params['limit'] : 0; 
         
         $sqlParams = [
             'id'     => $userId,
@@ -172,6 +192,45 @@ class UserBookRepository extends BaseRepository
         );
         
         return $stmt->fetchAll();
+    }
+    
+    /**
+     * Update user-book table based on DTO
+     * @param UserBookDto $dto
+     * @return void
+     */
+    public function updateUserBook(UserBookDto $dto): void
+    {
+        $sql = <<<'SQL'
+            UPDATE user_book 
+            SET status_id = :statusId,
+                start_date = :startDate,
+                end_date = :endDate,
+                format_id = :formatId,
+                rating = :rating,
+                language_id = :languageId,
+                notes = :notes,
+                modified_at = :modifiedAt
+            WHERE id = :id;
+        SQL;
+        
+        $now = new DateTime();
+                
+        $this->execute(
+            $this->writeConn, 
+            $sql,
+            [
+                'id'         => $dto->id->toString(),
+                'statusId'   => $dto->status->id,
+                'startDate'  => $dto->startDate ? $dto->startDate->format(BaseDto::FORMAT_DATE_TIME_DB) : null,
+                'endDate'    => $dto->endDate ? $dto->endDate->format(BaseDto::FORMAT_DATE_TIME_DB) : null,
+                'formatId'   => $dto->format->id,
+                'rating'     => $dto->rating,
+                'languageId' => $dto->language->id,
+                'notes'      => $dto->notes,
+                'modifiedAt' => $now->format(BaseDto::FORMAT_DATE_TIME_DB)
+            ]
+        );
     }
 }
 

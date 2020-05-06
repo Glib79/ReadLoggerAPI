@@ -101,6 +101,16 @@ class UserBookManager
     }
     
     /**
+     * Update user book using DTO
+     * @param UserBookDto $dto
+     * @return void
+     */
+    public function updateUserBook(UserBookDto $dto): void
+    {
+        $this->userBookRepository->updateUserBook($dto);
+    }
+    
+    /**
      * Prepare users book array
      * @param array $userBook
      * @return array

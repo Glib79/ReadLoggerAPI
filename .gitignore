@@ -1,7 +1,3 @@
-###> eclipse ###
-.project
-###< eclipse ###
-
 ###> docker ###
 .env
 docker/data/

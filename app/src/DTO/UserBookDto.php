@@ -22,17 +22,17 @@ class UserBookDto extends BaseDto
     public $id;
 
     /**
-     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
-     * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
-     * @Assert\Type(type="object", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
+     * @Groups({BaseDto::GROUP_CREATE})
+     * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE})
+     * @Assert\Type(type="object", groups={BaseDto::GROUP_CREATE})
      * @var Uuid
      */
     public $userId;
     
     /**
-     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
-     * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
-     * @Assert\Type(type="object", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
+     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
+     * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE})
+     * @Assert\Type(type="object", groups={BaseDto::GROUP_CREATE})
      * @var BookDto
      */
     public $book;
