@@ -77,26 +77,41 @@ class UserBookController extends BaseApiController
             return $this->response(Response::HTTP_BAD_REQUEST, $e->getMessage(), $e->getErrors());
         }
     }
-//    
-//    /**
-//     * Delete category
-//     * @param string $id
-//     * @return JsonResponse
-//     * @Route("/category/{id}", name="category_delete", methods={"DELETE"})
-//     */
-//    public function deleteCategory(string $id): JsonResponse
-//    {
-//        $category = $this->categoryRepository->getCategoryById($id);
-//        
-//        if (!$category) {
-//            return $this->response(Response::HTTP_NOT_FOUND, 'Category not found');
-//        }
-//        
-//        $this->categoryManager->deleteCategory($id);
-//            
-//        return $this->response(Response::HTTP_OK, 'Category deleted');
-//    }
     
+    /**
+     * Delete user book
+     * @param string $id
+     * @return JsonResponse
+     * @Route("/user-book/{id}", name="user_book_delete", methods={"DELETE"})
+     */
+    public function deleteUserBook(string $id): JsonResponse
+    {
+        $user = $this->getUser();
+        
+        $this->userBookManager->deleteUserBook($id, $user->getId()->toString());
+            
+        return $this->response(Response::HTTP_OK, 'User book deleted');
+    }
+
+    /**
+     * Get single user book
+     * @param string $id
+     * @return JsonResponse
+     * @Route("/user-book/{id}", name="user_book_get", methods={"GET"})
+     */
+    public function getUserBook(string $id): JsonResponse
+    {
+        $data = $this->userBookManager->getUsersBookById($id);
+
+        if (!$data) {
+            return $this->response(Response::HTTP_NOT_FOUND, 'Book not found');
+        }
+        
+        $output = $this->userBookDataTransformer->transformOutput($data, [BaseDto::GROUP_SINGLE]);
+
+        return $this->response(Response::HTTP_OK, 'Users book found', $output);
+    }
+
     /**
      * Users books list
      * @return JsonResponse
@@ -134,25 +149,6 @@ class UserBookController extends BaseApiController
     }
 
     /**
-     * Get single user book
-     * @param string $id
-     * @return JsonResponse
-     * @Route("/user-book/{id}", name="user_book_get", methods={"GET"})
-     */
-    public function getUserBook(string $id): JsonResponse
-    {
-        $data = $this->userBookManager->getUsersBookById($id);
-
-        if (!$data) {
-            return $this->response(Response::HTTP_NOT_FOUND, 'Book not found');
-        }
-        
-        $output = $this->userBookDataTransformer->transformOutput($data, [BaseDto::GROUP_SINGLE]);
-
-        return $this->response(Response::HTTP_OK, 'Users book found', $output);
-    }
-
-    /**
      * Update user book
      * @param Request $request
      * @param string $id
@@ -162,9 +158,11 @@ class UserBookController extends BaseApiController
     public function updateUserBook(Request $request, string $id): JsonResponse
     {
         try {
+            $user = $this->getUser();
             /** @var UserBookDto */
             $dto = $this->userBookDataTransformer->transformRequest($request);
             $dto->id = Uuid::fromString($id);
+            $dto->userId = $user->getId();
             
             $dto->validate([BaseDto::GROUP_UPDATE]);
             

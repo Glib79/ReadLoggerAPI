@@ -23,8 +23,8 @@ class UserBookDto extends BaseDto
 
     /**
      * @Groups({BaseDto::GROUP_CREATE})
-     * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE})
-     * @Assert\Type(type="object", groups={BaseDto::GROUP_CREATE})
+     * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
+     * @Assert\Type(type="object", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var Uuid
      */
     public $userId;

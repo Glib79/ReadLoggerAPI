@@ -58,6 +58,17 @@ class UserBookManager
     }
     
     /**
+     * Delete user book
+     * @param string $id
+     * @param string $userId
+     * @return void
+     */
+    public function deleteUserBook(string $id, string $userId): void
+    {
+        $this->userBookRepository->deleteUsersBook($id, $userId);
+    }
+    
+    /**
      * Finds users books
      * @param string $userId
      * @param array $params

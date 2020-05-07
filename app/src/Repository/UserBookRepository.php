@@ -74,6 +74,11 @@ class UserBookRepository extends BaseRepository
         return $id;
     }
     
+    /**
+     * Count users books
+     * @param string $userId
+     * @return int
+     */
     public function countUsersBooks(string $userId): int
     {
         $sql = <<<'SQL'
@@ -92,6 +97,30 @@ class UserBookRepository extends BaseRepository
         );
         
         return (int) $stmt->fetchColumn(0);
+    }
+    
+    /**
+     * Delete users book
+     * @param string $id
+     * @param string $userId
+     * @return void
+     */
+    public function deleteUsersBook(string $id, string $userId): void
+    {
+        $sql = <<<'SQL'
+            DELETE FROM user_book
+            WHERE id = :id
+            AND user_id = :userId;
+        SQL;
+        
+        $this->execute(
+            $this->writeConn, 
+            $sql,
+            [
+                'id'     => $id,
+                'userId' => $userId
+            ]
+        );
     }
     
     /**
@@ -211,7 +240,8 @@ class UserBookRepository extends BaseRepository
                 language_id = :languageId,
                 notes = :notes,
                 modified_at = :modifiedAt
-            WHERE id = :id;
+            WHERE id = :id
+            AND user_id = :userId;
         SQL;
         
         $now = new DateTime();
@@ -221,6 +251,7 @@ class UserBookRepository extends BaseRepository
             $sql,
             [
                 'id'         => $dto->id->toString(),
+                'userId'     => $dto->userId->toString(),
                 'statusId'   => $dto->status->id,
                 'startDate'  => $dto->startDate ? $dto->startDate->format(BaseDto::FORMAT_DATE_TIME_DB) : null,
                 'endDate'    => $dto->endDate ? $dto->endDate->format(BaseDto::FORMAT_DATE_TIME_DB) : null,
