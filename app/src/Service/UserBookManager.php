@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\DTO\StatusDto;
 use App\DTO\UserBookDto;
 use App\Repository\UserBookRepository;
 use App\Service\AuthorBookManager;
@@ -44,7 +45,7 @@ class UserBookManager
     }
 
     /**
-     * Create book for user from dto
+     * Create book for user from DTO
      * @param UserBookDto $dto
      * @return string $id - created record id
      */
@@ -54,6 +55,8 @@ class UserBookManager
             $id = $this->bookManager->createBook($dto->book);
             $dto->book->id = Uuid::fromString($id);
         }
+        $this->cleanDatesByStatus($dto);
+        
         return $this->userBookRepository->addBookToUser($dto);
     }
     
@@ -118,7 +121,22 @@ class UserBookManager
      */
     public function updateUserBook(UserBookDto $dto): void
     {
+        $this->cleanDatesByStatus($dto);
         $this->userBookRepository->updateUserBook($dto);
+    }
+    
+    /**
+     * Clean dates using status
+     * @param UserBookDto $dto
+     */
+    private function cleanDatesByStatus(UserBookDto $dto): void
+    {
+        if (!in_array($dto->status->id, StatusDto::STATUSES_WITH_START_DATE)) {
+            $dto->startDate = null;
+        }
+        if (!in_array($dto->status->id, StatusDto::STATUSES_WITH_END_DATE)) {
+            $dto->endDate = null;
+        }
     }
     
     /**

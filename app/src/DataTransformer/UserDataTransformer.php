@@ -15,13 +15,13 @@ class UserDataTransformer extends BaseDataTransformer implements DataTransformer
      * @param Request $request
      * @return UserDto
      */
-    public function transformInput(Request $request): UserDto
+    public function transformRequest(Request $request): UserDto
     {
         $dto = new UserDto($this->serializer, $this->validator);
         $data = json_decode($request->getContent(), true);
         
-        $dto->email = $data['email'];
-        $dto->password = $data['password'];
+        $dto->email = $data['email'] ?? null;
+        $dto->password = $data['password'] ?? null;
         
         return $dto;
     }
@@ -36,10 +36,10 @@ class UserDataTransformer extends BaseDataTransformer implements DataTransformer
     {
         $dto = new UserDto($this->serializer, $this->validator);
         $dto->id = Uuid::fromString($user['id']);
-        $dto->email = $user['email'];
-        $dto->roles = json_decode($user['roles']);
-        $dto->createdAt = new DateTime($user['created_at']);
-        $dto->modifiedAt = new DateTime($user['modified_at']);
+        $dto->email = $user['email'] ?? null;
+        $dto->roles = !empty($user['roles']) ? json_decode($user['roles']) : [];
+        $dto->createdAt = !empty($user['created_at']) ? new DateTime($user['created_at']) : null;
+        $dto->modifiedAt = !empty($user['modified_at']) ? new DateTime($user['modified_at']) : null;
         
         return $dto->normalize($groups);
     }

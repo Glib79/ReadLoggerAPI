@@ -18,15 +18,9 @@ class AuthorDataTransformer extends BaseDataTransformer implements DataTransform
     {
         $dto = new AuthorDto($this->serializer, $this->validator);
         
-        if (isset($data['id'])) {
-            $dto->id = Uuid::fromString($data['id']);
-        }
-        if (isset($data['firstName'])) {
-            $dto->firstName = $data['firstName'];
-        }
-        if (isset($data['lastName'])) {
-            $dto->lastName = $data['lastName'];
-        }
+        $dto->id = !empty($data['id']) ? Uuid::fromString($data['id']) : null;
+        $dto->firstName = $data['firstName'] ?? null;
+        $dto->lastName = $data['lastName'] ?? null;
         
         return $dto;
     }

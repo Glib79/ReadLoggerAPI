@@ -8,6 +8,21 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class StatusDto extends BaseDto
 {
+    public const STATUS_PLANNED = 1;
+    public const STATUS_DURING = 2;
+    public const STATUS_FINISHED = 3;
+    public const STATUS_ABANDONED = 4;
+    
+    public const STATUSES_WITH_START_DATE = [
+        self::STATUS_DURING,
+        self::STATUS_FINISHED,
+        self::STATUS_ABANDONED
+    ];
+    
+    public const STATUSES_WITH_END_DATE = [
+        self::STATUS_FINISHED
+    ];
+    
     /**
      * @Groups({BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
      * @Assert\NotBlank(groups={BaseDto::GROUP_UPDATE})

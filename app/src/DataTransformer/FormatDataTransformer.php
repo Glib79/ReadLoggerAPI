@@ -16,15 +16,9 @@ class FormatDataTransformer extends BaseDataTransformer implements DataTransform
     {
         $dto = new FormatDto($this->serializer, $this->validator);
         
-        if (isset($data['id'])) {
-            $dto->id = $data['id'];
-        }
-        if (isset($data['name'])) {
-            $dto->name = $data['name'];
-        }
-        if (isset($data['translationKey'])) {
-            $dto->translationKey = $data['translationKey'];
-        }
+        $dto->id = $data['id'] ?? null;
+        $dto->name = $data['name'] ?? null;
+        $dto->translationKey = $data['translationKey'] ?? null;
         
         return $dto;
     }

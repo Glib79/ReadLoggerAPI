@@ -56,20 +56,12 @@ class BookDataTransformer extends BaseDataTransformer implements DataTransformer
     {
         $dto = new BookDto($this->serializer, $this->validator);
         
-        if (isset($data['id'])) {
-            $dto->id = Uuid::fromString($data['id']);
-        }
-        if (isset($data['title'])) {
-            $dto->title = $data['title'];
-        }
-        if (isset($data['subTitle'])) {
-            $dto->subTitle = $data['subTitle'];
-        }
-        if (isset($data['size'])) {
-            $dto->size = $data['size'];
-        }
+        $dto->id = !empty($data['id']) ? Uuid::fromString($data['id']) : null;
+        $dto->title = $data['title'] ?? null;
+        $dto->subTitle = $data['subTitle'] ?? null;
+        $dto->size = $data['size'] ?? null;
         
-        if (isset($data['authors'])) {
+        if (!empty($data['authors'])) {
             $authors = [];
             foreach ($data['authors'] as $author) {
                 $authors[] = $this->authorDataTransformer->transformArray($author);
@@ -90,13 +82,13 @@ class BookDataTransformer extends BaseDataTransformer implements DataTransformer
     {
         $dto = new BookDto($this->serializer, $this->validator);
         $dto->id = Uuid::fromString($book['id']);
-        $dto->title = $book['title'];
+        $dto->title = $book['title'] ?? null;
         $dto->subTitle = $book['sub_title'] ?? null;
         $dto->size = $book['size'] ?? null;
         $dto->createdAt = !empty($book['created_at']) ? new DateTime($book['created_at']) : null;
         $dto->modifiedAt = !empty($book['modified_at']) ? new DateTime($book['modified_at']) : null;
         
-        if (isset($book['authors'])) {
+        if (!empty($book['authors'])) {
             $dto->authors = $this->authorDataTransformer->transformList(
                 $book['authors'], 
                 [BaseDto::GROUP_LIST]

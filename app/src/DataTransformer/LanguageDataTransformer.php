@@ -16,15 +16,9 @@ class LanguageDataTransformer extends BaseDataTransformer implements DataTransfo
     {
         $dto = new LanguageDto($this->serializer, $this->validator);
         
-        if (isset($data['id'])) {
-            $dto->id = $data['id'];
-        }
-        if (isset($data['symbol'])) {
-            $dto->symbol = $data['symbol'];
-        }
-        if (isset($data['translationKey'])) {
-            $dto->translationKey = $data['translationKey'];
-        }
+        $dto->id = $data['id'] ?? null;
+        $dto->symbol = $data['symbol'] ?? null;
+        $dto->translationKey = $data['translationKey'] ?? null;
         
         return $dto;
     }

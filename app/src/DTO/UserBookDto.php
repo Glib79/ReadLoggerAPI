@@ -3,9 +3,7 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
-use App\DTO\BookDto;
-use App\DTO\FormatDto;
-use App\DTO\LanguageDto;
+use App\Validator\Constraints as AppAssert;
 use DateTime;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -24,7 +22,7 @@ class UserBookDto extends BaseDto
     /**
      * @Groups({BaseDto::GROUP_CREATE})
      * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
-     * @Assert\Type(type="object", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
+     * @Assert\Type(type="Ramsey\Uuid\Uuid", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var Uuid
      */
     public $userId;
@@ -32,7 +30,7 @@ class UserBookDto extends BaseDto
     /**
      * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
      * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE})
-     * @Assert\Type(type="object", groups={BaseDto::GROUP_CREATE})
+     * @Assert\Type(type="App\DTO\BookDto", groups={BaseDto::GROUP_CREATE})
      * @var BookDto
      */
     public $book;
@@ -40,19 +38,23 @@ class UserBookDto extends BaseDto
     /**
      * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
      * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
-     * @Assert\Type(type="object", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
+     * @Assert\Type(type="App\DTO\StatusDto", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
+     * @AppAssert\StatusVsDates(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var StatusDto
      */
     public $status;
 
     /**
      * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
+     * @Assert\Type(type="DateTime", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var DateTime
      */
     public $startDate;
 
     /**
      * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
+     * @Assert\Type(type="DateTime", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
+     * @Assert\GreaterThanOrEqual(propertyPath="startDate", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var DateTime
      */
     public $endDate;
@@ -60,7 +62,7 @@ class UserBookDto extends BaseDto
      /**
      * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
      * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
-     * @Assert\Type(type="object", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
+     * @Assert\Type(type="App\DTO\FormatDto", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var FormatDto
      */
     public $format;
@@ -75,7 +77,7 @@ class UserBookDto extends BaseDto
      /**
      * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE})
      * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
-     * @Assert\Type(type="object", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
+     * @Assert\Type(type="App\DTO\LanguageDto", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var LanguageDto
      */
     public $language;

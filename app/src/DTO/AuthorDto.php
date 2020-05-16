@@ -13,7 +13,7 @@ class AuthorDto extends BaseDto
     /**
      * @Groups({BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST, BaseDto::GROUP_AUTOSUGGEST})
      * @Assert\NotBlank(groups={BaseDto::GROUP_UPDATE})
-     * @Assert\Type(type="object", groups={BaseDto::GROUP_UPDATE})
+     * @Assert\Type(type="Ramsey\Uuid\Uuid", groups={BaseDto::GROUP_UPDATE})
      * @var Uuid
      */
     public $id;

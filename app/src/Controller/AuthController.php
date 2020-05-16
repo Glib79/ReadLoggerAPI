@@ -79,7 +79,7 @@ class AuthController extends BaseApiController
     {
         try {
             /** @var UserDto */
-            $dto = $this->userDataTransformer->transformInput($request);
+            $dto = $this->userDataTransformer->transformRequest($request);
             
             $dto->validate([BaseDto::GROUP_CREATE]);
             

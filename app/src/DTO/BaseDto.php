@@ -43,7 +43,7 @@ abstract class BaseDto
     }
     
     /**
-     * Validate Dto object
+     * Validate DTO object
      * @param array $groups
      * @return bool
      */
@@ -64,7 +64,7 @@ abstract class BaseDto
     }
     
     /**
-     * Normalize Dto object to array
+     * Normalize DTO object to array
      * @param array $groups
      * @return array
      */
