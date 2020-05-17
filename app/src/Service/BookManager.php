@@ -54,7 +54,7 @@ class BookManager
     }
 
     /**
-     * Create book from dto
+     * Create book from DTO
      * @param BookDto $dto
      * @return string $id - created record id
      */
@@ -105,22 +105,4 @@ class BookManager
         
         return $books;
     }
-    
-//    /**
-//     * Delete Category
-//     * @param string $id
-//     */
-//    public function deleteCategory(string $id): void
-//    {
-//        $this->categoryRepository->deleteCategory($id);
-//    }
-//    
-//    /**
-//     * Update Category
-//     * @param CategoryDto $dto
-//     */
-//    public function updateCategory(CategoryDto $dto): void
-//    {
-//        $this->categoryRepository->updateCategory($dto);
-//    }
 }

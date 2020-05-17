@@ -7,15 +7,13 @@ use App\DTO\UserDto;
 use App\Repository\UserRepository;
 use App\Service\UserManager;
 use App\Support\User;
-use DateTime;
+use App\Tests\BaseTestCase;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use PHPUnit\Framework\TestCase;
-use Ramsey\Uuid\Uuid;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class UserManagerTest extends TestCase
+class UserManagerTest extends BaseTestCase
 {
     /**
      * SCENARIO: receiving User object
@@ -83,7 +81,7 @@ class UserManagerTest extends TestCase
         $userRepository->expects($this->once())
             ->method('createUser')
             ->with($userDtoRepository)
-            ->willReturn(true);
+            ->willReturn('id_string');
         
         $userDto = new UserDto($serializer, $validator);
         $userDto->email = 'test@test.com';
@@ -93,6 +91,6 @@ class UserManagerTest extends TestCase
         
         $result = $userManager->createUser($userDto);
         
-        $this->assertIsString($result);
+        $this->assertSame('id_string', $result);
     }
 }

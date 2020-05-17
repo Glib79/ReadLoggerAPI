@@ -23,7 +23,7 @@ class AuthorManager
     }
 
     /**
-     * Creates author from dto
+     * Creates author from DTO
      * @param AuthorDto $dto
      * @return string $id - created record id
      */

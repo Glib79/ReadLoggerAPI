@@ -57,7 +57,7 @@ class UserManager
     }
     
     /**
-     * Create User fro dto
+     * Create User fro DTO
      * @param string $email
      * @param string $password
      * @return string $id - created record id

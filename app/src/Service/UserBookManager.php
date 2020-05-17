@@ -12,6 +12,13 @@ use Ramsey\Uuid\Uuid;
 
 class UserBookManager
 {
+    private const INTERNAL_OBJECT_LIST = [
+        'book', 
+        'format', 
+        'language', 
+        'status'
+    ];
+    
     /**
      * @var AuthorBookManager
      */
@@ -147,23 +154,17 @@ class UserBookManager
     private function prepareUserBook(array $userBook): array
     {
         $row = [];
+
         foreach ($userBook as $key => $val) {
-            switch ($key) {
-                case substr($key, 0, 4) === 'book':
-                    $row['book'][substr($key, 5)] = $val;
-                    break;
-                case substr($key, 0, 6) === 'format':
-                    $row['format'][substr($key, 7)] = $val;
-                    break;
-                case substr($key, 0, 8) === 'language':
-                    $row['language'][substr($key, 9)] = $val;
-                    break;
-                case substr($key, 0, 6) === 'status':
-                    $row['status'][substr($key, 7)] = $val;
-                    break;
-                default:
-                    $row[$key] = $val;
+            $keyArray = explode('_', $key);
+            if (in_array($keyArray[0], self::INTERNAL_OBJECT_LIST)) {
+                $newKey = array_shift($keyArray);
+                $row[$newKey][implode($keyArray)] = $val;
+                
+                continue;
             }
+            
+            $row[$key] = $val;
         }
         
         return $row;
