@@ -86,9 +86,17 @@ class UserBookController extends BaseApiController
      */
     public function deleteUserBook(string $id): JsonResponse
     {
+        $data = $this->userBookManager->getUsersBookById($id);
+
+        if (!$data) {
+            return $this->response(Response::HTTP_NOT_FOUND, 'Book not found');
+        }
+        
+        $oldUserBook = $this->userBookDataTransformer->transformOutput($data, [BaseDto::GROUP_LOG]);
+
         $user = $this->getUser();
         
-        $this->userBookManager->deleteUserBook($id, $user->getId()->toString());
+        $this->userBookManager->deleteUserBook($oldUserBook, $user->getId());
             
         return $this->response(Response::HTTP_OK, 'User book deleted');
     }

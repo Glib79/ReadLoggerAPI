@@ -14,7 +14,7 @@ class LogDataTransformer extends BaseDataTransformer implements DataTransformerI
      * @param Uuid $userId
      * @param string $action
      * @param string $table
-     * @param object $newDto object after update
+     * @param object $newDto object after update, set to null for delete action
      * @param array $old normalized old object
      * @param array $removeFields fields to remove from log
      * @return LogDto
@@ -23,7 +23,7 @@ class LogDataTransformer extends BaseDataTransformer implements DataTransformerI
         Uuid $userId,
         string $action,
         string $table,
-        object $newDto, 
+        object $newDto = null, //it's null for delete action
         array $old = null,
         array $removeFields = []
     ): LogDto
@@ -32,10 +32,10 @@ class LogDataTransformer extends BaseDataTransformer implements DataTransformerI
         $dto->userId = $userId;
         $dto->action = $action;
         $dto->table = $table;
-        $dto->recordId = $newDto->id;
+        $dto->recordId = $newDto ? $newDto->id : Uuid::fromString($old['id']);
         $dto->value = $this->prepareValue(
-            $newDto->normalize([BaseDto::GROUP_LOG]), 
-            $old,
+            $newDto ? $newDto->normalize([BaseDto::GROUP_LOG]) : $old, 
+            $newDto ? $old : null,
             $removeFields
         );
         
@@ -65,11 +65,11 @@ class LogDataTransformer extends BaseDataTransformer implements DataTransformerI
     /**
      * Prepare value for log
      * @param array $newDto
-     * @param array $oldDto
+     * @param array|null $oldDto
      * @param array $removeFields
      * @return array
      */
-    private function prepareValue(array $newDto, array $oldDto, array $removeFields): array
+    private function prepareValue(array $newDto, ?array $oldDto, array $removeFields): array
     {
         if ($oldDto === null) {
             return $newDto;
@@ -99,7 +99,7 @@ class LogDataTransformer extends BaseDataTransformer implements DataTransformerI
                 continue;
             }
             
-            if ($val === $oldDto[$key]) {
+            if ((string) $val === (string) $oldDto[$key]) {
                 unset($newDto[$key]);
             }
         }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\DataTransformer\LogDataTransformer;
+use App\DTO\LogDto;
 use App\DTO\StatusDto;
 use App\DTO\UserBookDto;
 use App\Repository\UserBookRepository;
@@ -22,7 +23,9 @@ class UserBookManager
     ];
     
     private const REMOVE_FIELDS_FROM_LOG = ['book'];
-    
+    private const USER_BOOK_TABLE = 'user_book';
+
+
     /**
      * @var AuthorBookManager
      */
@@ -79,23 +82,45 @@ class UserBookManager
     public function createUserBook(UserBookDto $dto): string
     {
         if (!$dto->book->id) {
-            $id = $this->bookManager->createBook($dto->book);
+            $id = $this->bookManager->createBook($dto->book, $dto->userId);
             $dto->book->id = Uuid::fromString($id);
         }
         $this->cleanDatesByStatus($dto);
         
-        return $this->userBookRepository->addBookToUser($dto);
+        $id = $this->userBookRepository->addBookToUser($dto);
+        $dto->id = Uuid::fromString($id);
+        
+        $logDto = $this->logDataTransformer->prepareLog(
+            $dto->userId, 
+            LogDto::ACTION_CREATE, 
+            self::USER_BOOK_TABLE, 
+            $dto
+        );
+        
+        $this->logManager->addLog($logDto);
+        
+        return $id;
     }
     
     /**
      * Delete user book
-     * @param string $id
-     * @param string $userId
+     * @param array $userBook
+     * @param Uuid $userId
      * @return void
      */
-    public function deleteUserBook(string $id, string $userId): void
+    public function deleteUserBook(array $userBook, Uuid $userId): void
     {
-        $this->userBookRepository->deleteUsersBook($id, $userId);
+        $this->userBookRepository->deleteUsersBook($userBook['id'], $userId->toString());
+        
+        $logDto = $this->logDataTransformer->prepareLog(
+            $userId, 
+            LogDto::ACTION_DELETE, 
+            self::USER_BOOK_TABLE,
+            null,
+            $userBook
+        );
+        
+        $this->logManager->addLog($logDto);
     }
     
     /**
@@ -154,8 +179,8 @@ class UserBookManager
         
         $logDto = $this->logDataTransformer->prepareLog(
             $dto->userId, 
-            'update', 
-            'user_book', 
+            LogDto::ACTION_UPDATE, 
+            self::USER_BOOK_TABLE, 
             $dto,
             $oldUserBook,
             self::REMOVE_FIELDS_FROM_LOG

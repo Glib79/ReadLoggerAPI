@@ -10,6 +10,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class LogDto extends BaseDto
 {
+    public const ACTION_CREATE = 'create';
+    public const ACTION_DELETE = 'delete';
+    public const ACTION_UPDATE = 'update';
+    
     /**
      * @Groups({BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
      * @Assert\NotBlank(groups={BaseDto::GROUP_UPDATE})

@@ -3,16 +3,21 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\DataTransformer\LogDataTransformer;
+use App\DTO\LogDto;
 use App\DTO\UserDto;
 use App\Repository\UserRepository;
+use App\Service\LogManager;
 use App\Support\User;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Ramsey\Uuid\Uuid;
 
 class UserManager
 {
     public const ROLE_USER = 'ROLE_USER';
+    private const USER_TABLE = 'user';
     
     /**
      * @var UserPasswordEncoderInterface
@@ -25,6 +30,16 @@ class UserManager
     private $JWTManager;
     
     /**
+     * @var LogDataTransformer
+     */
+    private $logDataTransformer;
+ 
+    /**
+     * @var LogManager
+     */
+    private $logManager;
+    
+    /**
      * @var UserRepository
      */
     private $userRepository;
@@ -33,16 +48,22 @@ class UserManager
      * UserManager constructor
      * @param UserPasswordEncoderInterface $encoder
      * @param JWTTokenManagerInterface $JWTManager
+     * @param LogDataTransformer $logDataTransformer
+     * @param LogManager $logManager
      * @param UserRepository $userRepository
      */
     public function __construct(
         UserPasswordEncoderInterface $encoder,
         JWTTokenManagerInterface $JWTManager, 
+        LogDataTransformer $logDataTransformer,
+        LogManager $logManager,
         UserRepository $userRepository
     )
     {
         $this->encoder = $encoder;
         $this->JWTManager = $JWTManager;
+        $this->logDataTransformer = $logDataTransformer;
+        $this->logManager = $logManager;
         $this->userRepository = $userRepository;
     }
     
@@ -71,6 +92,18 @@ class UserManager
         
         $dto->password = $this->encoder->encodePassword($user, $dto->password);
         
-        return $this->userRepository->createUser($dto);
+        $id = $this->userRepository->createUser($dto);
+        $dto->id = Uuid::fromString($id);
+        
+        $logDto = $this->logDataTransformer->prepareLog(
+            $dto->id, 
+            LogDto::ACTION_CREATE, 
+            self::USER_TABLE,
+            $dto
+        );
+        
+        $this->logManager->addLog($logDto);
+        
+        return $id;
     }
 }
