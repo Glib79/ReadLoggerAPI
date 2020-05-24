@@ -11,13 +11,23 @@ use Symfony\Component\Validator\Constraints as Assert;
 class UserDto extends BaseDto
 {
     /**
-     * @Groups({BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
+     * @Groups({
+     *     BaseDto::GROUP_LIST,
+     *     BaseDto::GROUP_LOG, 
+     *     BaseDto::GROUP_SINGLE,
+     *     BaseDto::GROUP_UPDATE
+     * })
      * @var Uuid
      */
     public $id;
     
     /**
-     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
+     * @Groups({
+     *     BaseDto::GROUP_CREATE, 
+     *     BaseDto::GROUP_LIST,
+     *     BaseDto::GROUP_LOG,
+     *     BaseDto::GROUP_SINGLE 
+     * })
      * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE})
      * @Assert\Email(groups={BaseDto::GROUP_CREATE})
      * @var string
@@ -25,7 +35,10 @@ class UserDto extends BaseDto
     public $email;
     
     /**
-     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
+     * @Groups({
+     *     BaseDto::GROUP_CREATE,
+     *     BaseDto::GROUP_UPDATE
+     * })
      * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @Assert\Regex(
      *     pattern="/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{7,20}$/",
@@ -37,7 +50,10 @@ class UserDto extends BaseDto
     public $password;
     
     /**
-     * @Groups({BaseDto::GROUP_SINGLE})
+     * @Groups({
+     *     BaseDto::GROUP_LOG,
+     *     BaseDto::GROUP_SINGLE
+     * })
      * @var array
      */
     public $roles;

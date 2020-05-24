@@ -157,6 +157,14 @@ class UserBookController extends BaseApiController
      */
     public function updateUserBook(Request $request, string $id): JsonResponse
     {
+        $data = $this->userBookManager->getUsersBookById($id);
+
+        if (!$data) {
+            return $this->response(Response::HTTP_NOT_FOUND, 'Book not found');
+        }
+        
+        $oldUserBook = $this->userBookDataTransformer->transformOutput($data, [BaseDto::GROUP_LOG]);
+        
         try {
             $user = $this->getUser();
             /** @var UserBookDto */
@@ -166,7 +174,7 @@ class UserBookController extends BaseApiController
             
             $dto->validate([BaseDto::GROUP_UPDATE]);
             
-            $this->userBookManager->updateUserBook($dto);
+            $this->userBookManager->updateUserBook($dto, $oldUserBook);
 
             return $this->response(Response::HTTP_OK, 'User book updated');
         } catch (ValidationException $e) {

@@ -12,7 +12,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 class UserBookDto extends BaseDto
 {
     /**
-     * @Groups({BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
+     * @Groups({
+     *     BaseDto::GROUP_LIST,
+     *     BaseDto::GROUP_LOG, 
+     *     BaseDto::GROUP_SINGLE
+     * })
      * @Assert\NotBlank(groups={BaseDto::GROUP_UPDATE})
      * @Assert\Type(type="Ramsey\Uuid\Uuid", groups={BaseDto::GROUP_UPDATE})
      * @var Uuid
@@ -20,7 +24,10 @@ class UserBookDto extends BaseDto
     public $id;
 
     /**
-     * @Groups({BaseDto::GROUP_CREATE})
+     * @Groups({
+     *     BaseDto::GROUP_CREATE,
+     *     BaseDto::GROUP_LOG
+     * })
      * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @Assert\Type(type="Ramsey\Uuid\Uuid", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var Uuid
@@ -28,7 +35,12 @@ class UserBookDto extends BaseDto
     public $userId;
     
     /**
-     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
+     * @Groups({
+     *     BaseDto::GROUP_CREATE,
+     *     BaseDto::GROUP_LIST,
+     *     BaseDto::GROUP_LOG,
+     *     BaseDto::GROUP_SINGLE
+     * })
      * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE})
      * @Assert\Type(type="App\DTO\BookDto", groups={BaseDto::GROUP_CREATE})
      * @var BookDto
@@ -36,7 +48,13 @@ class UserBookDto extends BaseDto
     public $book;
 
     /**
-     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
+     * @Groups({
+     *     BaseDto::GROUP_CREATE,
+     *     BaseDto::GROUP_LIST,
+     *     BaseDto::GROUP_LOG,
+     *     BaseDto::GROUP_SINGLE,
+     *     BaseDto::GROUP_UPDATE
+     * })
      * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @Assert\Type(type="App\DTO\StatusDto", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @AppAssert\StatusVsDates(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
@@ -45,37 +63,68 @@ class UserBookDto extends BaseDto
     public $status;
 
     /**
-     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
+     * @Groups({
+     *     BaseDto::GROUP_CREATE,
+     *     BaseDto::GROUP_LIST,
+     *     BaseDto::GROUP_LOG,
+     *     BaseDto::GROUP_SINGLE,
+     *     BaseDto::GROUP_UPDATE
+     * })
      * @Assert\Type(type="DateTime", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var DateTime
      */
     public $startDate;
 
     /**
-     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
+     * @Groups({
+     *     BaseDto::GROUP_CREATE,
+     *     BaseDto::GROUP_LIST,
+     *     BaseDto::GROUP_LOG,
+     *     BaseDto::GROUP_SINGLE,
+     *     BaseDto::GROUP_UPDATE,
+     * })
      * @Assert\Type(type="DateTime", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
-     * @Assert\GreaterThanOrEqual(propertyPath="startDate", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
+     * @Assert\GreaterThanOrEqual(
+     *     propertyPath="startDate",
+     *     groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE}
+     * )
      * @var DateTime
      */
     public $endDate;
 
-     /**
-     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
+    /**
+     * @Groups({
+     *     BaseDto::GROUP_CREATE,
+     *     BaseDto::GROUP_LIST,
+     *     BaseDto::GROUP_LOG,
+     *     BaseDto::GROUP_SINGLE,
+     *     BaseDto::GROUP_UPDATE
+     * })
      * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @Assert\Type(type="App\DTO\FormatDto", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var FormatDto
      */
     public $format;
 
-     /**
-     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE})
+    /**
+     * @Groups({
+     *     BaseDto::GROUP_CREATE,
+     *     BaseDto::GROUP_LOG,
+     *     BaseDto::GROUP_SINGLE,
+     *     BaseDto::GROUP_UPDATE
+     * })
      * @Assert\Type(type="int", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var int
      */
     public $rating;
 
-     /**
-     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE})
+    /**
+     * @Groups({
+     *     BaseDto::GROUP_CREATE,
+     *     BaseDto::GROUP_LOG,
+     *     BaseDto::GROUP_SINGLE,
+     *     BaseDto::GROUP_UPDATE
+     * })
      * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @Assert\Type(type="App\DTO\LanguageDto", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var LanguageDto
@@ -83,7 +132,12 @@ class UserBookDto extends BaseDto
     public $language;
 
     /**
-     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE})
+     * @Groups({
+     *     BaseDto::GROUP_CREATE,
+     *     BaseDto::GROUP_LOG,
+     *     BaseDto::GROUP_SINGLE,
+     *     BaseDto::GROUP_UPDATE
+     * })
      * @Assert\Type(type="string", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var string
      */

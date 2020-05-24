@@ -16,10 +16,11 @@ abstract class BaseDto
     //output
     public const GROUP_AUTOSUGGEST = 'autosuggest';
     public const GROUP_LIST = 'list';
+    public const GROUP_LOG = 'log';
     public const GROUP_SINGLE = 'single';
     //formats
     public const FORMAT_DATE_TIME_DB = 'Y-m-d H:i:s';
-    public const FORMAT_RATE_TIME_RESPONSE = 'Y-m-d H:i:s';
+    public const FORMAT_DATE_TIME_RESPONSE = 'Y-m-d H:i:s';
     
     /**
      * @var SerializerInterface
@@ -43,6 +44,23 @@ abstract class BaseDto
     }
     
     /**
+     * Normalize DTO object to array
+     * @param array $groups
+     * @return array
+     */
+    public function normalize(array $groups): array
+    {
+        return $this->serializer->normalize(
+            $this, 
+            null, 
+            [
+                'groups' => $groups, 
+                DateTimeNormalizer::FORMAT_KEY => self::FORMAT_DATE_TIME_RESPONSE
+            ]
+        );
+    }
+    
+    /**
      * Validate DTO object
      * @param array $groups
      * @return bool
@@ -61,22 +79,5 @@ abstract class BaseDto
         }
         
         return true;
-    }
-    
-    /**
-     * Normalize DTO object to array
-     * @param array $groups
-     * @return array
-     */
-    public function normalize(array $groups): array
-    {
-        return $this->serializer->normalize(
-            $this, 
-            null, 
-            [
-                'groups' => $groups, 
-                DateTimeNormalizer::FORMAT_KEY => self::FORMAT_RATE_TIME_RESPONSE
-            ]
-        );
     }
 }

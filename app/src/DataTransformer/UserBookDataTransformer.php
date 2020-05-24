@@ -94,6 +94,7 @@ class UserBookDataTransformer extends BaseDataTransformer implements DataTransfo
     {
         $dto = new UserBookDto($this->serializer, $this->validator);
         $dto->id = Uuid::fromString($userBook['id']);
+        $dto->userId = !empty($userBook['user_id']) ? Uuid::fromString($userBook['user_id']) : null;
         $dto->book = $this->bookDataTransformer->transformOutput(
             $userBook['book'], 
             $groups

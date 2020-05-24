@@ -9,7 +9,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 class LanguageDto extends BaseDto
 {
     /**
-     * @Groups({BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
+     * @Groups({
+     *     BaseDto::GROUP_LIST,
+     *     BaseDto::GROUP_LOG, 
+     *     BaseDto::GROUP_SINGLE
+     * })
      * @Assert\NotBlank(groups={BaseDto::GROUP_UPDATE})
      * @Assert\Type(type="int", groups={BaseDto::GROUP_UPDATE})
      * @var int
@@ -17,7 +21,12 @@ class LanguageDto extends BaseDto
     public $id;
     
     /**
-     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
+     * @Groups({
+     *     BaseDto::GROUP_CREATE,
+     *     BaseDto::GROUP_LIST,
+     *     BaseDto::GROUP_SINGLE,
+     *     BaseDto::GROUP_UPDATE
+     * })
      * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @Assert\Type(type="string", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var string
@@ -25,7 +34,12 @@ class LanguageDto extends BaseDto
     public $symbol;
 
     /**
-     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST})
+     * @Groups({
+     *     BaseDto::GROUP_CREATE,
+     *     BaseDto::GROUP_LIST,
+     *     BaseDto::GROUP_SINGLE,
+     *     BaseDto::GROUP_UPDATE
+     * })
      * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @Assert\Type(type="string", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var string

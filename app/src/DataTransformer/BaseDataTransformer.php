@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace App\DataTransformer;
 
-use ErrorException;
+use App\DTO\BaseDto;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -30,7 +30,7 @@ abstract class BaseDataTransformer
         $this->validator = $validator;
     }
     
-     /**
+    /**
      * Transform array from database to array ready for output
      * @param array $data
      * @param array $groups

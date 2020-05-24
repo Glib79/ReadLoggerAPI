@@ -11,7 +11,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 class AuthorDto extends BaseDto
 {
     /**
-     * @Groups({BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST, BaseDto::GROUP_AUTOSUGGEST})
+     * @Groups({
+     *     BaseDto::GROUP_AUTOSUGGEST, 
+     *     BaseDto::GROUP_LIST, 
+     *     BaseDto::GROUP_LOG,
+     *     BaseDto::GROUP_SINGLE
+     * })
      * @Assert\NotBlank(groups={BaseDto::GROUP_UPDATE})
      * @Assert\Type(type="Ramsey\Uuid\Uuid", groups={BaseDto::GROUP_UPDATE})
      * @var Uuid
@@ -19,7 +24,14 @@ class AuthorDto extends BaseDto
     public $id;
     
     /**
-     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST, BaseDto::GROUP_AUTOSUGGEST})
+     * @Groups({
+     *     BaseDto::GROUP_AUTOSUGGEST,
+     *     BaseDto::GROUP_CREATE, 
+     *     BaseDto::GROUP_LIST, 
+     *     BaseDto::GROUP_LOG,
+     *     BaseDto::GROUP_SINGLE, 
+     *     BaseDto::GROUP_UPDATE
+     * })
      * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @Assert\Type(type="string", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var string
@@ -27,7 +39,14 @@ class AuthorDto extends BaseDto
     public $firstName;
 
     /**
-     * @Groups({BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE, BaseDto::GROUP_SINGLE, BaseDto::GROUP_LIST, BaseDto::GROUP_AUTOSUGGEST})
+     * @Groups({
+     *     BaseDto::GROUP_AUTOSUGGEST,
+     *     BaseDto::GROUP_CREATE, 
+     *     BaseDto::GROUP_LIST, 
+     *     BaseDto::GROUP_LOG,
+     *     BaseDto::GROUP_SINGLE, 
+     *     BaseDto::GROUP_UPDATE 
+     * })
      * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @Assert\Type(type="string", groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_UPDATE})
      * @var string

@@ -3,11 +3,13 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\DataTransformer\LogDataTransformer;
 use App\DTO\StatusDto;
 use App\DTO\UserBookDto;
 use App\Repository\UserBookRepository;
 use App\Service\AuthorBookManager;
 use App\Service\BookManager;
+use App\Service\LogManager;
 use Ramsey\Uuid\Uuid;
 
 class UserBookManager
@@ -19,6 +21,8 @@ class UserBookManager
         'status'
     ];
     
+    private const REMOVE_FIELDS_FROM_LOG = ['book'];
+    
     /**
      * @var AuthorBookManager
      */
@@ -28,7 +32,17 @@ class UserBookManager
      * @var BookManager
      */
     private $bookManager;
-
+ 
+    /**
+     * @var LogDataTransformer
+     */
+    private $logDataTransformer;
+ 
+    /**
+     * @var LogManager
+     */
+    private $logManager;
+    
     /**
      * @var UserBookRepository
      */
@@ -38,16 +52,22 @@ class UserBookManager
      * UserBookManager constructor
      * @param AuthorBookManager $authorBookManager
      * @param BookManager $bookManager
+     * @param LogDataTransformer $logDataTransformer
+     * @param LogManager $logManager
      * @param UserBookRepository $userBookRepository
      */
     public function __construct(
         AuthorBookManager $authorBookManager,
         BookManager $bookManager,
+        LogDataTransformer $logDataTransformer,
+        LogManager $logManager,
         UserBookRepository $userBookRepository
     ) 
     {
         $this->authorBookManager = $authorBookManager;
         $this->bookManager = $bookManager;
+        $this->logDataTransformer = $logDataTransformer;
+        $this->logManager = $logManager;
         $this->userBookRepository = $userBookRepository;
     }
 
@@ -124,12 +144,25 @@ class UserBookManager
     /**
      * Update user book using DTO
      * @param UserBookDto $dto
+     * @param array $oldUserBook
      * @return void
      */
-    public function updateUserBook(UserBookDto $dto): void
+    public function updateUserBook(UserBookDto $dto, array $oldUserBook): void
     {
         $this->cleanDatesByStatus($dto);
         $this->userBookRepository->updateUserBook($dto);
+        
+        $logDto = $this->logDataTransformer->prepareLog(
+            $dto->userId, 
+            'update', 
+            'user_book', 
+            $dto,
+            $oldUserBook,
+            self::REMOVE_FIELDS_FROM_LOG
+        );
+        if (!empty($logDto->value)) {
+            $this->logManager->addLog($logDto);
+        }
     }
     
     /**
@@ -159,7 +192,7 @@ class UserBookManager
             $keyArray = explode('_', $key);
             if (in_array($keyArray[0], self::INTERNAL_OBJECT_LIST)) {
                 $newKey = array_shift($keyArray);
-                $row[$newKey][implode($keyArray)] = $val;
+                $row[$newKey][implode('_', $keyArray)] = $val;
                 
                 continue;
             }
