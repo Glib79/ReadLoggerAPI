@@ -3,13 +3,16 @@ declare(strict_types=1);
 
 namespace App\Tests\Service;
 
+use App\DataTransformer\LogDataTransformer;
 use App\DTO\AuthorDto;
 use App\DTO\BookDto;
+use App\DTO\LogDto;
 use App\Repository\AuthorBookRepository;
 use App\Repository\BookRepository;
 use App\Service\AuthorBookManager;
 use App\Service\AuthorManager;
 use App\Service\BookManager;
+use App\Service\LogManager;
 use App\Tests\BaseTestCase;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -53,9 +56,33 @@ class BookManagerTest extends BaseTestCase
             ->method('addAuthorsToBook')
             ->with($bookDto);
         
-        $bookManager = new BookManager($authorBookManager, $authorManager, $authorBookRepository, $bookRepository);
+        $userId = Uuid::uuid4();
+        $logDto = new LogDto($serializer, $validator);
+        $logDto->userId = $userId;
+        $logDto->action = LogDto::ACTION_CREATE;
+        $logDto->table = 'book';
         
-        $result = $bookManager->createBook($bookDto);
+        $logDataTransformer = $this->createMock(LogDataTransformer::class);
+        $logDataTransformer->expects($this->once())
+            ->method('prepareLog')
+            ->with($userId, LogDto::ACTION_CREATE, 'book', $bookDto)
+            ->willReturn($logDto);
+        
+        $logManager = $this->createMock(LogManager::class);
+        $logManager->expects($this->once())
+            ->method('addLog')
+            ->with($logDto);
+        
+        $bookManager = new BookManager(
+            $authorBookManager, 
+            $authorManager, 
+            $authorBookRepository, 
+            $bookRepository,
+            $logDataTransformer,
+            $logManager
+        );
+        
+        $result = $bookManager->createBook($bookDto, $userId);
         
         $this->assertSame($bookId, $result);
     }
@@ -99,9 +126,33 @@ class BookManagerTest extends BaseTestCase
             ->method('addAuthorsToBook')
             ->with($bookDto);
         
-        $bookManager = new BookManager($authorBookManager, $authorManager, $authorBookRepository, $bookRepository);
+        $userId = Uuid::uuid4();
+        $logDto = new LogDto($serializer, $validator);
+        $logDto->userId = $userId;
+        $logDto->action = LogDto::ACTION_CREATE;
+        $logDto->table = 'book';
         
-        $result = $bookManager->createBook($bookDto);
+        $logDataTransformer = $this->createMock(LogDataTransformer::class);
+        $logDataTransformer->expects($this->once())
+            ->method('prepareLog')
+            ->with($userId, LogDto::ACTION_CREATE, 'book', $bookDto)
+            ->willReturn($logDto);
+        
+        $logManager = $this->createMock(LogManager::class);
+        $logManager->expects($this->once())
+            ->method('addLog')
+            ->with($logDto);
+        
+        $bookManager = new BookManager(
+            $authorBookManager, 
+            $authorManager, 
+            $authorBookRepository, 
+            $bookRepository,
+            $logDataTransformer,
+            $logManager
+        );
+        
+        $result = $bookManager->createBook($bookDto, $userId);
         
         $this->assertSame($bookId, $result);
     }
@@ -138,7 +189,22 @@ class BookManagerTest extends BaseTestCase
         $authorBookRepository->expects($this->never())
             ->method($this->anything()); 
         
-        $bookManager = new BookManager($authorBookManager, $authorManager, $authorBookRepository, $bookRepository);
+        $logDataTransformer = $this->createMock(LogDataTransformer::class);
+        $logDataTransformer->expects($this->never())
+            ->method($this->anything()); 
+
+        $logManager = $this->createMock(LogManager::class);
+        $logManager->expects($this->never())
+            ->method($this->anything()); 
+        
+        $bookManager = new BookManager(
+            $authorBookManager, 
+            $authorManager, 
+            $authorBookRepository, 
+            $bookRepository,
+            $logDataTransformer,
+            $logManager
+        );
         
         $result = $bookManager->findBooksByQuery('guery_string');
 

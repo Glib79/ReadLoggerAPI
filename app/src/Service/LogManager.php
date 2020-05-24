@@ -31,6 +31,10 @@ class LogManager
      */
     public function addLog(LogDto $dto): string
     {
-        return $this->logRepository->addLog($dto);
+        if (!empty($dto->value)) {
+            return $this->logRepository->addLog($dto);
+        }
+        
+        return '';
     }
 }

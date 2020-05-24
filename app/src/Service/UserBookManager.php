@@ -185,9 +185,8 @@ class UserBookManager
             $oldUserBook,
             self::REMOVE_FIELDS_FROM_LOG
         );
-        if (!empty($logDto->value)) {
-            $this->logManager->addLog($logDto);
-        }
+        
+        $this->logManager->addLog($logDto);
     }
     
     /**
