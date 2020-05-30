@@ -15,6 +15,8 @@ use Ramsey\Uuid\Uuid;
 
 class UserBookManager
 {
+    public const USER_BOOK_TABLE = 'user_book';
+
     private const INTERNAL_OBJECT_LIST = [
         'book', 
         'format', 
@@ -23,7 +25,6 @@ class UserBookManager
     ];
     
     private const REMOVE_FIELDS_FROM_LOG = ['book'];
-    private const USER_BOOK_TABLE = 'user_book';
 
 
     /**

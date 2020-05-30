@@ -5,6 +5,7 @@ namespace App\DataTransformer;
 
 use App\DTO\BaseDto;
 use App\DTO\LogDto;
+use DateTime;
 use Ramsey\Uuid\Uuid;
 
 class LogDataTransformer extends BaseDataTransformer implements DataTransformerInterface
@@ -52,13 +53,13 @@ class LogDataTransformer extends BaseDataTransformer implements DataTransformerI
     {
         $dto = new LogDto($this->serializer, $this->validator);
         $dto->id = Uuid::fromString($log['id']);
-        $dto->userId = $log['user_id'] ?? null;
+        $dto->userId = $log['user_id'] ? Uuid::fromString($log['user_id']) : null;
         $dto->happenedAt = !empty($log['happened_at']) ? new DateTime($log['happened_at']) : null;
         $dto->action = $log['action'] ?? null;
         $dto->table = $log['table'] ?? null;
         $dto->recordId = !empty($log['record_id']) ? Uuid::fromString($log['record_id']) : null;
-        $dto->value = !empty($log['value']) ? json_decode($log['value']) : null;
-        
+        $dto->value = !empty($log['value']) ? json_decode($log['value'], true) : null;
+
         return $dto->normalize($groups);
     }
     
