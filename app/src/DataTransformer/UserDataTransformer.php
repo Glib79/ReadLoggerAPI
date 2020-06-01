@@ -38,8 +38,6 @@ class UserDataTransformer extends BaseDataTransformer implements DataTransformer
         $dto->id = Uuid::fromString($user['id']);
         $dto->email = $user['email'] ?? null;
         $dto->roles = !empty($user['roles']) ? json_decode($user['roles']) : [];
-        $dto->createdAt = !empty($user['created_at']) ? new DateTime($user['created_at']) : null;
-        $dto->modifiedAt = !empty($user['modified_at']) ? new DateTime($user['modified_at']) : null;
         
         return $dto->normalize($groups);
     }

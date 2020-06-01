@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\DataTransformer;
 
-use DateTime;
 use App\DataTransformer\AuthorDataTransformer;
 use App\DTO\BaseDto;
 use App\DTO\BookDto;
@@ -85,8 +84,6 @@ class BookDataTransformer extends BaseDataTransformer implements DataTransformer
         $dto->title = $book['title'] ?? null;
         $dto->subTitle = $book['sub_title'] ?? null;
         $dto->size = $book['size'] ?? null;
-        $dto->createdAt = !empty($book['created_at']) ? new DateTime($book['created_at']) : null;
-        $dto->modifiedAt = !empty($book['modified_at']) ? new DateTime($book['modified_at']) : null;
         
         if (!empty($book['authors'])) {
             $dto->authors = $this->authorDataTransformer->transformList(

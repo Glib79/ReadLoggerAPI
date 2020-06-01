@@ -25,8 +25,6 @@ final class Version20200427110700 extends AbstractMigration
             `email` varchar(45) NOT NULL,
             `password` varchar(255) NOT NULL,
             `roles` json DEFAULT NULL,
-            `created_at` datetime NOT NULL,
-            `modified_at` datetime NOT NULL,
             PRIMARY KEY (`id`),
             UNIQUE KEY `uniq_user_email` (`email`)
         ) 

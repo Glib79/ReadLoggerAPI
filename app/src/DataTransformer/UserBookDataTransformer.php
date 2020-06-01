@@ -115,8 +115,6 @@ class UserBookDataTransformer extends BaseDataTransformer implements DataTransfo
             $groups
         );
         $dto->notes = $userBook['notes'] ?? null;
-        $dto->createdAt = !empty($userBook['created_at']) ? new DateTime($userBook['created_at']) : null;
-        $dto->modifiedAt = !empty($userBook['modified_at']) ? new DateTime($userBook['modified_at']) : null;
         
         return $dto->normalize($groups);
     }

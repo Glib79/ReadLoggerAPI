@@ -57,16 +57,4 @@ class UserDto extends BaseDto
      * @var array
      */
     public $roles;
-    
-    /**
-     * @Groups({BaseDto::GROUP_SINGLE})
-     * @var DateTime
-     */
-    public $createdAt;
-    
-    /**
-     * @Groups({BaseDto::GROUP_SINGLE})
-     * @var DateTime
-     */
-    public $modifiedAt;
 }

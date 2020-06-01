@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\DTO\AuthorDto;
-use App\DTO\BaseDto;
-use DateTime;
 use Doctrine\DBAL\ParameterType;
 use Ramsey\Uuid\Uuid;
 
@@ -18,10 +16,9 @@ class AuthorRepository extends BaseRepository
      */
     public function addAuthor(AuthorDto $dto): string
     {
-        $sql = 'INSERT INTO author (id, first_name, last_name, created_at, modified_at) 
-            VALUES (:id, :firstName, :lastName, :createdAt, :modifiedAt);';
+        $sql = 'INSERT INTO author (id, first_name, last_name) 
+            VALUES (:id, :firstName, :lastName);';
         
-        $now = new DateTime();
         $id = Uuid::uuid4()->toString();
         
         $this->execute(
@@ -30,9 +27,7 @@ class AuthorRepository extends BaseRepository
             [
                 'id'         => $id,
                 'firstName'  => $dto->firstName,
-                'lastName'   => $dto->lastName,
-                'createdAt'  => $now->format(BaseDto::FORMAT_DATE_TIME_DB),
-                'modifiedAt' => $now->format(BaseDto::FORMAT_DATE_TIME_DB)
+                'lastName'   => $dto->lastName
             ]
         );
         

@@ -29,9 +29,7 @@ class UserBookRepository extends BaseRepository
                 format_id,
                 rating,
                 language_id,
-                notes,
-                created_at, 
-                modified_at
+                notes
             ) 
             VALUES (
                 :id, 
@@ -43,13 +41,10 @@ class UserBookRepository extends BaseRepository
                 :formatId,
                 :rating,
                 :languageId,
-                :notes,
-                :createdAt, 
-                :modifiedAt
+                :notes
             );
         SQL;
         
-        $now = new DateTime();
         $id = Uuid::uuid4()->toString();
         
         $this->execute(
@@ -65,9 +60,7 @@ class UserBookRepository extends BaseRepository
                 'formatId'   => $dto->format->id,
                 'rating'     => $dto->rating,
                 'languageId' => $dto->language->id,
-                'notes'      => $dto->notes,
-                'createdAt'  => $now->format(BaseDto::FORMAT_DATE_TIME_DB),
-                'modifiedAt' => $now->format(BaseDto::FORMAT_DATE_TIME_DB)
+                'notes'      => $dto->notes
             ]
         );
         
@@ -238,14 +231,11 @@ class UserBookRepository extends BaseRepository
                 format_id = :formatId,
                 rating = :rating,
                 language_id = :languageId,
-                notes = :notes,
-                modified_at = :modifiedAt
+                notes = :notes
             WHERE id = :id
             AND user_id = :userId;
         SQL;
         
-        $now = new DateTime();
-                
         $this->execute(
             $this->writeConn, 
             $sql,
@@ -258,8 +248,7 @@ class UserBookRepository extends BaseRepository
                 'formatId'   => $dto->format->id,
                 'rating'     => $dto->rating,
                 'languageId' => $dto->language->id,
-                'notes'      => $dto->notes,
-                'modifiedAt' => $now->format(BaseDto::FORMAT_DATE_TIME_DB)
+                'notes'      => $dto->notes
             ]
         );
     }

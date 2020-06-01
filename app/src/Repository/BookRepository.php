@@ -3,9 +3,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\DTO\BaseDto;
 use App\DTO\BookDto;
-use DateTime;
 use Doctrine\DBAL\ParameterType;
 use Ramsey\Uuid\Uuid;
 
@@ -18,10 +16,9 @@ class BookRepository extends BaseRepository
      */
     public function addBook(BookDto $dto): string
     {
-        $sql = 'INSERT INTO book (id, title, sub_title, size, created_at, modified_at) 
-            VALUES (:id, :title, :subTitle, :size, :createdAt, :modifiedAt);';
+        $sql = 'INSERT INTO book (id, title, sub_title, size) 
+            VALUES (:id, :title, :subTitle, :size);';
         
-        $now = new DateTime();
         $id = Uuid::uuid4()->toString();
         
         $this->execute(
@@ -31,9 +28,7 @@ class BookRepository extends BaseRepository
                 'id'         => $id,
                 'title'      => $dto->title,
                 'subTitle'   => $dto->subTitle,
-                'size'       => $dto->size,
-                'createdAt'  => $now->format(BaseDto::FORMAT_DATE_TIME_DB),
-                'modifiedAt' => $now->format(BaseDto::FORMAT_DATE_TIME_DB)
+                'size'       => $dto->size
             ]
         );
         

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\DTO;
 
-use DateTime;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -52,16 +51,4 @@ class AuthorDto extends BaseDto
      * @var string
      */
     public $lastName;
-
-    /**
-     * @Groups({BaseDto::GROUP_SINGLE})
-     * @var DateTime
-     */
-    public $createdAt;
-    
-    /**
-     * @Groups({BaseDto::GROUP_SINGLE})
-     * @var DateTime
-     */
-    public $modifiedAt;
 }

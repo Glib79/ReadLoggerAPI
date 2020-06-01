@@ -142,16 +142,4 @@ class UserBookDto extends BaseDto
      * @var string
      */
     public $notes;
-    
-    /**
-     * @Groups({BaseDto::GROUP_SINGLE})
-     * @var DateTime
-     */
-    public $createdAt;
-    
-    /**
-     * @Groups({BaseDto::GROUP_SINGLE})
-     * @var DateTime
-     */
-    public $modifiedAt;
 }

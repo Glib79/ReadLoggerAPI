@@ -23,8 +23,6 @@ final class Version20200427112900 extends AbstractMigration
             `id` char(36) NOT NULL,
             `first_name` varchar(100) NOT NULL,
             `last_name` varchar(100) NOT NULL,
-            `created_at` datetime NOT NULL,
-            `modified_at` datetime NOT NULL,
             PRIMARY KEY (`id`)
         )
         ENGINE=InnoDB 
@@ -37,8 +35,6 @@ final class Version20200427112900 extends AbstractMigration
             `title` varchar(100) NOT NULL,
             `sub_title` varchar(100) DEFAULT NULL,
             `size` int DEFAULT NULL,
-            `created_at` datetime NOT NULL,
-            `modified_at` datetime NOT NULL,
             PRIMARY KEY (`id`)
         )
         ENGINE=InnoDB 
@@ -103,8 +99,6 @@ final class Version20200427112900 extends AbstractMigration
             `rating` int(1) DEFAULT NULL,
             `language_id` int(3) NOT NULL,
             `notes` text DEFAULT NULL,
-            `created_at` datetime NOT NULL,
-            `modified_at` datetime NOT NULL,
             PRIMARY KEY (`id`),
             FOREIGN KEY (`user_id`) REFERENCES user(`id`) ON DELETE RESTRICT,
             FOREIGN KEY (`book_id`) REFERENCES book(`id`) ON DELETE RESTRICT,
