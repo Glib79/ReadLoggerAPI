@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace App\DataTransformer;
 
 use App\DTO\UserDto;
-use DateTime;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -38,6 +37,9 @@ class UserDataTransformer extends BaseDataTransformer implements DataTransformer
         $dto->id = Uuid::fromString($user['id']);
         $dto->email = $user['email'] ?? null;
         $dto->roles = !empty($user['roles']) ? json_decode($user['roles']) : [];
+        $dto->isActive = isset($user['is_active']) ? (bool) $user['is_active'] : null;
+        $dto->isConfirmed = isset($user['is_confirmed']) ? (bool) $user['is_confirmed'] : null;
+        $dto->token = $user['token'] ?? null;
         
         return $dto->normalize($groups);
     }

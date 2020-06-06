@@ -17,6 +17,8 @@ use Ramsey\Uuid\Uuid;
 class UserManager
 {
     public const ROLE_USER = 'ROLE_USER';
+    
+    private const TOKEN_LENGTH = 32;
     private const USER_TABLE = 'user';
     
     /**
@@ -86,6 +88,9 @@ class UserManager
     public function createUser(UserDto $dto): string
     {
         $dto->roles = [self::ROLE_USER];
+        $dto->isActive = true;
+        $dto->isConfirmed = false;
+        $dto->token = $this->generateToken(self::TOKEN_LENGTH);
         
         $user = new User($dto->email);
         $user->setRoles($dto->roles);
@@ -105,5 +110,25 @@ class UserManager
         $this->logManager->addLog($logDto);
         
         return $id;
+    }
+    
+    /**
+     * Generates random string from letters and digits
+     * @param int $length
+     * @return string
+     */
+    private function generateToken(int $length): string
+    {
+        $token = "";
+        $codeAlphabet = implode(range('A', 'Z'));
+        $codeAlphabet.= implode(range('a', 'z'));
+        $codeAlphabet.= implode(range(0, 9));
+        $max = strlen($codeAlphabet);
+
+        for ($i = 0; $i < $length; $i++) {
+            $token .= $codeAlphabet[random_int(0, $max - 1)];
+        }
+
+        return $token;
     }
 }

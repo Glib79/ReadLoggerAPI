@@ -24,7 +24,7 @@ class AuthRepository extends ServiceEntityRepository implements UserLoaderInterf
     
     /**
      * AuthRepository constructor
-     * @param Connection $connection
+     * @param ManagerRegistry $doctrine
      */
     public function __construct(ManagerRegistry $doctrine)
     {
@@ -32,14 +32,14 @@ class AuthRepository extends ServiceEntityRepository implements UserLoaderInterf
     }
     
     /**
-     * Mathod required by UserLoaderInterface for authentication
+     * Method required by UserLoaderInterface for authentication
      * @param string $username
      * @throws InvalidArgumentException
      * @return User
      */
     public function loadUserByUsername(string $username): User
     {
-        $sql = 'SELECT id, email, password, roles FROM user WHERE email = :email;';
+        $sql = 'SELECT id, email, password, roles FROM user WHERE email = :email AND is_active = 1;';
         
         $stmt = $this->readConn->prepare($sql);
         $stmt->execute([

@@ -15,19 +15,22 @@ class UserRepository extends BaseRepository
      */
     public function createUser(UserDto $user): string
     {
-        $sql = 'INSERT INTO user (id, email, password, roles) 
-                VALUES (:id, :email, :password, :roles);';
+        $sql = 'INSERT INTO user (id, email, password, roles, is_active, is_confirmed, token) 
+                VALUES (:id, :email, :password, :roles, :isActive, :isConfirmed, :token);';
         
         $id = Uuid::uuid4()->toString();
         
         $this->execute(
             $this->readConn, 
-            $sql, 
+            $sql,
             [
-                'id'         => $id,
-                'email'      => $user->email,
-                'password'   => $user->password,
-                'roles'      => json_encode($user->roles)
+                'id'          => $id,
+                'email'       => $user->email,
+                'password'    => $user->password,
+                'roles'       => json_encode($user->roles),
+                'isActive'    => (int) $user->isActive,
+                'isConfirmed' => (int) $user->isConfirmed,
+                'token'       => $user->token
             ]
         );
         

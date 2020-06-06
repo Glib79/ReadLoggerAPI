@@ -57,4 +57,29 @@ class UserDto extends BaseDto
      * @var array
      */
     public $roles;
+    
+    /**
+     * @Groups({
+     *     BaseDto::GROUP_LOG
+     * })
+     * @var bool 
+     */
+    public $isActive;
+
+    /**
+     * @Groups({
+     *     BaseDto::GROUP_LOG,
+     *     BaseDto::GROUP_SINGLE
+     * })
+     * @var bool
+     */
+    public $isConfirmed;
+
+    /**
+     * @Groups({
+     *     BaseDto::GROUP_LOG
+     * })
+     * @var string 
+     */
+    public $token;
 }
