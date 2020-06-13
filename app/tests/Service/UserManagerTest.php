@@ -9,6 +9,7 @@ use App\DTO\UserDto;
 use App\Repository\UserRepository;
 use App\Service\LogManager;
 use App\Service\UserManager;
+use App\Support\SendEmail;
 use App\Support\User;
 use App\Tests\BaseTestCase;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -49,17 +50,81 @@ class UserManagerTest extends BaseTestCase
         $logManager->expects($this->never())
             ->method($this->anything());
         
+        $sendEmail = $this->createMock(SendEmail::class);
+        $sendEmail->expects($this->never())
+            ->method($this->anything());
+        
         $userManager = new UserManager(
             $encoder, 
             $JWTManager,
             $logDataTransformer,
             $logManager,
-            $userRepository
+            $userRepository,
+            $sendEmail
         );
         
         $result = $userManager->generateJWTToken($user);
         
         $this->assertSame('token_string', $result);
+    }
+    
+    /**
+     * SCENARIO: receiving User id
+     * EXPECTED: set up in db isConfirmed for true for given user
+     */
+    public function testConfirmEmail()
+    {
+        $serializer = $this->createMock(SerializerInterface::class);
+        $validator = $this->createMock(ValidatorInterface::class);
+        $userId = Uuid::uuid4();
+
+        $encoder = $this->createMock(UserPasswordEncoderInterface::class);
+        $encoder->expects($this->never())
+            ->method($this->anything());
+        
+        $JWTManager = $this->createMock(JWTTokenManagerInterface::class);
+        $JWTManager->expects($this->never())
+            ->method($this->anything());
+            
+        $userRepository = $this->createMock(UserRepository::class);
+        $userRepository->expects($this->once())
+            ->method('confirmEmail')
+            ->with($userId->toString());
+
+        $logDto = new LogDto($serializer, $validator);
+        $logDto->userId = $userId;
+        $logDto->action = LogDto::ACTION_CONFIRM_EMAIL;
+        $logDto->table = 'user';
+        
+        $logDataTransformer = $this->createMock(LogDataTransformer::class);
+        $logDataTransformer->expects($this->once())
+            ->method('prepareLog')
+            ->with($userId, LogDto::ACTION_CONFIRM_EMAIL, 'user', null, [
+                'id'          => $userId->toString(),
+                'isConfirmed' => true,
+                'token'       => ''
+            ])
+            ->willReturn($logDto);
+        
+        $logManager = $this->createMock(LogManager::class);
+        $logManager->expects($this->once())
+            ->method('addLog')
+            ->with($logDto);
+        
+        $sendEmail = $this->createMock(SendEmail::class);
+        $sendEmail->expects($this->never())
+            ->method($this->anything());
+        
+        $userManager = new UserManager(
+            $encoder, 
+            $JWTManager,
+            $logDataTransformer,
+            $logManager,
+            $userRepository,
+            $sendEmail
+        );
+        
+        $userManager->confirmEmail($userId->toString());
     }
     
     /**
@@ -87,16 +152,10 @@ class UserManagerTest extends BaseTestCase
         $validator = $this->createMock(ValidatorInterface::class);
 
         $userId = Uuid::uuid4();
-        $userDtoRepository = new UserDto($serializer, $validator);
-        $userDtoRepository->id = $userId;
-        $userDtoRepository->email = 'test@test.com';
-        $userDtoRepository->password = 'encoded_password_string';
-        $userDtoRepository->roles = ['ROLE_USER'];
         
         $userRepository = $this->createMock(UserRepository::class);
         $userRepository->expects($this->once())
             ->method('createUser')
-            ->with($userDtoRepository)
             ->willReturn($userId->toString());
         
         $userDto = new UserDto($serializer, $validator);
@@ -104,15 +163,75 @@ class UserManagerTest extends BaseTestCase
         $userDto->email = 'test@test.com';
         $userDto->password = 'password_string';
           
+        $logDataTransformer = $this->createMock(LogDataTransformer::class);
+        $logDataTransformer->expects($this->once())
+            ->method('prepareLog');
+        
+        $logManager = $this->createMock(LogManager::class);
+        $logManager->expects($this->once())
+            ->method('addLog');
+
+        $sendEmail = $this->createMock(SendEmail::class);
+        $sendEmail->expects($this->once())
+            ->method('sendEmail');
+        
+        $userManager = new UserManager(
+            $encoder, 
+            $JWTManager,
+            $logDataTransformer,
+            $logManager,
+            $userRepository,
+            $sendEmail
+        );
+        
+        $result = $userManager->createUser($userDto);
+        
+        $this->assertSame($userId->toString(), $result);
+    }
+    
+    /**
+     * SCENARIO: receiving User id
+     * EXPECTED: generate new token store it in db and send new email to user
+     */
+    public function testResendConfirmationEmail()
+    {
+        $serializer = $this->createMock(SerializerInterface::class);
+        $validator = $this->createMock(ValidatorInterface::class);
+        $userId = Uuid::uuid4();
+
+        $encoder = $this->createMock(UserPasswordEncoderInterface::class);
+        $encoder->expects($this->never())
+            ->method($this->anything());
+        
+        $JWTManager = $this->createMock(JWTTokenManagerInterface::class);
+        $JWTManager->expects($this->never())
+            ->method($this->anything());
+            
+        $userRepository = $this->createMock(UserRepository::class);
+        $userRepository->expects($this->once())
+            ->method('setToken');
+        $userRepository->expects($this->once())
+            ->method('getUserById')
+            ->with($userId->toString())
+            ->willReturn([
+                'id'       => $userId->toString(),
+                'email'    => 'test@test.com',
+                'language' => 'en',
+                'token'    => 'token_string'
+            ]);
+
         $logDto = new LogDto($serializer, $validator);
         $logDto->userId = $userId;
-        $logDto->action = LogDto::ACTION_CREATE;
+        $logDto->action = LogDto::ACTION_UPDATE;
         $logDto->table = 'user';
         
         $logDataTransformer = $this->createMock(LogDataTransformer::class);
         $logDataTransformer->expects($this->once())
             ->method('prepareLog')
-            ->with($userId, LogDto::ACTION_CREATE, 'user', $userDtoRepository)
+            ->with($userId, LogDto::ACTION_UPDATE, 'user', null, [
+                'id'    => $userId->toString(),
+                'token' => 'token_string'
+            ])
             ->willReturn($logDto);
         
         $logManager = $this->createMock(LogManager::class);
@@ -120,16 +239,25 @@ class UserManagerTest extends BaseTestCase
             ->method('addLog')
             ->with($logDto);
         
+        $sendEmail = $this->createMock(SendEmail::class);
+        $sendEmail->expects($this->once())
+            ->method('sendEmail')
+            ->with(['to' => 'test@test.com'], 
+            [
+                'template' => SendEmail::TEMPLATE_CONFIRM_EMAIL,
+                'language' => 'en',
+                'token'    => 'token_string'
+            ]);
+        
         $userManager = new UserManager(
             $encoder, 
             $JWTManager,
             $logDataTransformer,
             $logManager,
-            $userRepository
+            $userRepository,
+            $sendEmail
         );
         
-        $result = $userManager->createUser($userDto);
-        
-        $this->assertSame($userId->toString(), $result);
+        $userManager->resendConfirmationEmail($userId);
     }
 }
