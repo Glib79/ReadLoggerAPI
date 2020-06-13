@@ -9,6 +9,8 @@ use UnexpectedValueException;
 
 class SendEmail
 {
+    public const TEMPLATE_CONFIRM_EMAIL = 'confirmEmail';
+    
     private const EMAIL_FROM = 'grzegorz.libera+support@gmail.com';
     /** @todo domain should be in config? */
     private const CONFIRM_LINK = 'http://localhost:3000/email-confirm/%s';
@@ -66,7 +68,7 @@ class SendEmail
     private function prepareMessage(string $template, array $params): array
     {
         switch ($template) {
-            case 'confirmEmail':
+            case self::TEMPLATE_CONFIRM_EMAIL:
                 return $this->prepareConfirmEmail($params);
             default:
                 throw new UnexpectedValueException('Wrong template!');

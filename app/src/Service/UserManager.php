@@ -25,7 +25,7 @@ class UserManager
     /**
      * @var UserPasswordEncoderInterface
      */
-    private $ecncoder;
+    private $encoder;
     
     /**
      * @var JWTTokenManagerInterface
@@ -136,7 +136,7 @@ class UserManager
         $this->sendEmail->sendEmail(
             ['to' => $dto->email], 
             [
-                'template' => 'confirmEmail',
+                'template' => SendEmail::TEMPLATE_CONFIRM_EMAIL,
                 'language' => $dto->language,
                 'token'    => $dto->token
             ]
@@ -152,6 +152,41 @@ class UserManager
         $this->logManager->addLog($logDto);
         
         return $id;
+    }
+    
+    /**
+     * Creates new token and resend confirmation email
+     * @param Uuid $id
+     * @return void
+     */
+    public function resendConfirmationEmail(Uuid $id): void
+    {
+        $token = $this->generateToken(self::TOKEN_LENGTH);
+        $this->userRepository->setToken($id->toString(), $token);
+        
+        $user = $this->userRepository->getUserById($id->toString());
+
+        $this->sendEmail->sendEmail(
+            ['to' => $user['email']], 
+            [
+                'template' => SendEmail::TEMPLATE_CONFIRM_EMAIL,
+                'language' => $user['language'],
+                'token'    => $user['token']
+            ]
+        );
+        
+        $logDto = $this->logDataTransformer->prepareLog(
+            $id, 
+            LogDto::ACTION_UPDATE, 
+            self::USER_TABLE,
+            null,
+            [
+                'id'    => $user['id'],
+                'token' => $user['token']
+            ]
+        );
+        
+        $this->logManager->addLog($logDto);
     }
     
     /**

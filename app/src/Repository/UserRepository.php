@@ -90,5 +90,27 @@ class UserRepository extends BaseRepository
         
         return $stmt->fetch() ?: [];
     }
+
+    /**
+     * Set new token for user
+     * @param string $id
+     * @param string $token
+     * @return void
+     */
+    public function setToken (string $id, string $token): void
+    {
+        $sql = 'UPDATE user SET token = :token 
+                WHERE id = :id;';
+        
+        $this->execute(
+            $this->readConn, 
+            $sql,
+            [
+                'id'    => $id,
+                'token' => $token
+            ]
+        );
+    }
+
 }
 
