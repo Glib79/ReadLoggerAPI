@@ -28,8 +28,8 @@ class UserDto extends BaseDto
      *     BaseDto::GROUP_LOG,
      *     BaseDto::GROUP_SINGLE 
      * })
-     * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE})
-     * @Assert\Email(groups={BaseDto::GROUP_CREATE})
+     * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_CONFIRM})
+     * @Assert\Email(groups={BaseDto::GROUP_CREATE, BaseDto::GROUP_CONFIRM})
      * @var string
      */
     public $email;
@@ -79,7 +79,17 @@ class UserDto extends BaseDto
      * @Groups({
      *     BaseDto::GROUP_LOG
      * })
+     * @Assert\NotBlank(groups={BaseDto::GROUP_CONFIRM})
      * @var string 
      */
     public $token;
+
+    /**
+     * @Groups({
+     *     BaseDto::GROUP_LOG
+     * })
+     * @Assert\NotBlank(groups={BaseDto::GROUP_CREATE})
+     * @var string 
+     */
+    public $language;
 }

@@ -42,7 +42,7 @@ class ExceptionListener
     {
         $exception = $event->getThrowable();
         
-        $this->logger->error(sprintf('%s occurred with messsage: %s', get_class($exception), $exception->getMessage()));
+        $this->logger->error(sprintf('%s occurred with message: %s', get_class($exception), $exception->getMessage()));
         
         $response = $this->createResponse($exception);
         $event->setResponse($response);

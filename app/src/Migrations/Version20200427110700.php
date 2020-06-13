@@ -28,6 +28,7 @@ final class Version20200427110700 extends AbstractMigration
             `is_active` boolean NOT NULL DEFAULT true,
             `is_confirmed` boolean NOT NULL DEFAULT false,
             `token` char(32) DEFAULT NULL,
+            `language` char(2) NOT NULL DEFAULT "en",
             PRIMARY KEY (`id`),
             UNIQUE KEY `uniq_user_email` (`email`)
         ) 

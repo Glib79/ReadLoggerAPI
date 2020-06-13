@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class LogDto extends BaseDto
 {
+    public const ACTION_CONFIRM_EMAIL = 'confirm';
     public const ACTION_CREATE = 'create';
     public const ACTION_DELETE = 'delete';
     public const ACTION_UPDATE = 'update';

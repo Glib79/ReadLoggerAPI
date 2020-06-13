@@ -9,6 +9,7 @@ use App\DTO\UserDto;
 use App\Repository\UserRepository;
 use App\Service\LogManager;
 use App\Support\User;
+use App\Support\SendEmail;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -45,6 +46,11 @@ class UserManager
      * @var UserRepository
      */
     private $userRepository;
+
+    /**
+     * @var SendEmail
+     */
+    private $sendEmail;
     
     /**
      * UserManager constructor
@@ -53,13 +59,15 @@ class UserManager
      * @param LogDataTransformer $logDataTransformer
      * @param LogManager $logManager
      * @param UserRepository $userRepository
+     * @param SendEmail $sendEmail
      */
     public function __construct(
         UserPasswordEncoderInterface $encoder,
         JWTTokenManagerInterface $JWTManager, 
         LogDataTransformer $logDataTransformer,
         LogManager $logManager,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        SendEmail $sendEmail
     )
     {
         $this->encoder = $encoder;
@@ -67,6 +75,7 @@ class UserManager
         $this->logDataTransformer = $logDataTransformer;
         $this->logManager = $logManager;
         $this->userRepository = $userRepository;
+        $this->sendEmail = $sendEmail;
     }
     
     /**
@@ -80,7 +89,31 @@ class UserManager
     }
     
     /**
-     * Create User fro DTO
+     * Confirms email for user
+     * @param string $id
+     * @return void
+     */
+    public function confirmEmail(string $id): void
+    {
+        $this->userRepository->confirmEmail($id);
+
+        $logDto = $this->logDataTransformer->prepareLog(
+            Uuid::fromString($id), 
+            LogDto::ACTION_CONFIRM_EMAIL, 
+            self::USER_TABLE,
+            null,
+            [
+                'id'          => $id,
+                'isConfirmed' => true,
+                'token'       => ''
+            ]
+        );
+        
+        $this->logManager->addLog($logDto);
+    }
+    
+    /**
+     * Create User from DTO
      * @param string $email
      * @param string $password
      * @return string $id - created record id
@@ -99,6 +132,15 @@ class UserManager
         
         $id = $this->userRepository->createUser($dto);
         $dto->id = Uuid::fromString($id);
+        
+        $this->sendEmail->sendEmail(
+            ['to' => $dto->email], 
+            [
+                'template' => 'confirmEmail',
+                'language' => $dto->language,
+                'token'    => $dto->token
+            ]
+        );
         
         $logDto = $this->logDataTransformer->prepareLog(
             $dto->id, 

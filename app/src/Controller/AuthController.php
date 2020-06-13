@@ -50,6 +50,37 @@ class AuthController extends BaseApiController
     }
     
     /**
+     * User email confirmation
+     * @param Request $request
+     * @return JsonResponse
+     * @Route("/auth/email-confirm", name="email_confirm", methods={"POST"})
+     */
+    public function confirmEmail(Request $request): JsonResponse
+    {
+        try {
+            /** @var UserDto */
+            $dto = $this->userDataTransformer->transformRequest($request);
+            
+            $dto->validate([BaseDto::GROUP_CONFIRM]);
+            
+            $status = false;
+            $user = $this->userRepository->findUserByEmailAndToken($dto->email, $dto->token);
+            if ($user) {
+                $this->userManager->confirmEmail($user['id']);
+                $status = true;
+            }
+            
+            return $this->response(
+                Response::HTTP_OK,
+                sprintf('User email %sconfirmed', ($status ? '' : 'has not been ')), 
+                ['status' => $status]
+            );
+        } catch (ValidationException $e) {
+            return $this->response(Response::HTTP_BAD_REQUEST, $e->getMessage(), $e->getErrors());
+        }
+    }
+    
+    /**
      * Login user
      * @param UserInterface $user
      * @return JsonResponse

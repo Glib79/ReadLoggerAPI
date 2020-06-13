@@ -24,7 +24,7 @@ class LogDataTransformer extends BaseDataTransformer implements DataTransformerI
         Uuid $userId,
         string $action,
         string $table,
-        object $newDto = null, //it's null for delete action
+        object $newDto = null, //it's null if we have only array (ex delete action)
         array $old = null,
         array $removeFields = []
     ): LogDto

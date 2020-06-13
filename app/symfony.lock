@@ -78,6 +78,9 @@
     "doctrine/reflection": {
         "version": "1.2.0"
     },
+    "egulias/email-validator": {
+        "version": "2.1.17"
+    },
     "jdorn/sql-formatter": {
         "version": "v1.2.17"
     },
@@ -258,6 +261,18 @@
     "symfony/inflector": {
         "version": "v5.0.5"
     },
+    "symfony/mailer": {
+        "version": "4.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "4.3",
+            "ref": "15658c2a0176cda2e7dba66276a2030b52bd81b2"
+        },
+        "files": [
+            "config/packages/mailer.yaml"
+        ]
+    },
     "symfony/mime": {
         "version": "v5.0.5"
     },
@@ -328,6 +343,15 @@
     },
     "symfony/security-http": {
         "version": "v5.0.5"
+    },
+    "symfony/sendgrid-mailer": {
+        "version": "4.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "4.4",
+            "ref": "b46e4f8f1adb2864f0aa9c0ff57aea3324a07199"
+        }
     },
     "symfony/serializer": {
         "version": "v5.0.7"

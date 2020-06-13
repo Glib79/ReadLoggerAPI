@@ -11,6 +11,7 @@ use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 abstract class BaseDto
 {
     //input
+    public const GROUP_CONFIRM = 'confirm';
     public const GROUP_CREATE = 'create';
     public const GROUP_UPDATE = 'update';
     //output

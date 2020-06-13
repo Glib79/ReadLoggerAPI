@@ -9,14 +9,31 @@ use Ramsey\Uuid\Uuid;
 class UserRepository extends BaseRepository
 {
     /**
+     * Confirm user email in database
+     * @param string $id
+     * @return void
+     */
+    public function confirmEmail (string $id): void
+    {
+        $sql = 'UPDATE user SET is_confirmed = 1, token = "" 
+                WHERE id = :id;';
+        
+        $this->execute(
+            $this->readConn, 
+            $sql,
+            ['id' => $id]
+        );
+    }
+    
+    /**
      * Add new user to database
      * @param UserDto $user
      * @return string $id - created record id
      */
     public function createUser(UserDto $user): string
     {
-        $sql = 'INSERT INTO user (id, email, password, roles, is_active, is_confirmed, token) 
-                VALUES (:id, :email, :password, :roles, :isActive, :isConfirmed, :token);';
+        $sql = 'INSERT INTO user (id, email, password, roles, is_active, is_confirmed, token, language) 
+                VALUES (:id, :email, :password, :roles, :isActive, :isConfirmed, :token, :language);';
         
         $id = Uuid::uuid4()->toString();
         
@@ -30,11 +47,34 @@ class UserRepository extends BaseRepository
                 'roles'       => json_encode($user->roles),
                 'isActive'    => (int) $user->isActive,
                 'isConfirmed' => (int) $user->isConfirmed,
-                'token'       => $user->token
+                'token'       => $user->token,
+                'language'    => $user->language
             ]
         );
         
         return $id;
+    }
+    
+    /**
+     * Finds user by email and token
+     * @param string $email
+     * @param string $token
+     * @return array
+     */
+    public function findUserByEmailAndToken(string $email, string $token): array
+    {
+        $sql = 'SELECT * FROM user WHERE email = :email AND token = :token;';
+
+        $stmt = $this->execute(
+            $this->readConn, 
+            $sql, 
+            [
+                'email' => $email,
+                'token' => $token
+            ]
+        );
+        
+        return $stmt->fetch() ?: [];
     }
     
     /**

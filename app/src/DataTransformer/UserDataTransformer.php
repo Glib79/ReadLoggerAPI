@@ -21,6 +21,8 @@ class UserDataTransformer extends BaseDataTransformer implements DataTransformer
         
         $dto->email = $data['email'] ?? null;
         $dto->password = $data['password'] ?? null;
+        $dto->token = $data['token'] ?? null;
+        $dto->language = $data['language'] ?? null;
         
         return $dto;
     }
@@ -40,6 +42,7 @@ class UserDataTransformer extends BaseDataTransformer implements DataTransformer
         $dto->isActive = isset($user['is_active']) ? (bool) $user['is_active'] : null;
         $dto->isConfirmed = isset($user['is_confirmed']) ? (bool) $user['is_confirmed'] : null;
         $dto->token = $user['token'] ?? null;
+        $dto->language = $user['language'] ?? null;
         
         return $dto->normalize($groups);
     }
